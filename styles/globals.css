@@ -1,26 +1,52 @@
 html,
-body {
+body {  
   padding: 0;
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
-    Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+  background-color:  #d6d6f7;
 }
 
-a {
-  color: inherit;
-  text-decoration: none;
+.app{
+  display: flex;
+  justify-content: center;
+  position: relative;
+  top: 6rem;
 }
 
-* {
-  box-sizing: border-box;
+.home-div{
+  width: 20rem;
+  height: 25rem;
+  background-color: #662d91;
+  border-radius: 1rem;
+  box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
 }
 
-@media (prefers-color-scheme: dark) {
-  html {
-    color-scheme: dark;
-  }
-  body {
-    color: white;
-    background: black;
-  }
+.cube-icon{
+  font-size: 5rem;
+  color: #ececf8;
+  position: relative;
+  top: -3.5rem;
+}
+
+.title{
+  position: relative;
+  top: -4.5rem;
+  color: #ececf8;
+}
+
+.play-button{
+  width: 10rem;
+  height: 3rem;
+  outline: none;
+  border: none;
+  cursor: pointer;
+  border-radius: 0.5rem;
+  font-size: 1.2rem;
+  background-color:  #ececf8;
+  color: #662d91;
+  position: relative;
+  top: 3rem;
 }

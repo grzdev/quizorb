@@ -8,6 +8,7 @@ body {
 .app{
   display: flex;
   justify-content: center;
+  align-items: center;
   position: relative;
   top: 6rem;
 }
@@ -49,4 +50,55 @@ body {
   color: #662d91;
   position: relative;
   top: 3rem;
+}
+
+.play-button:hover,
+.play-button:focus {
+  box-shadow: 0 0.5em 0.5em -0.4em var(--hover);
+  transform: translateY(-0.25em);
+}
+
+.question{
+  color: white;
+  font-size: 1.3rem;
+  width: 15rem;
+  height: 2rem;
+  position: relative;
+  top: -3rem;
+  left: 0.6rem;
+}
+
+.options-container{
+  width: 15rem;
+  display: grid;
+  grid-template-columns: auto auto ;
+  position: relative;
+  top: 2rem;
+  left: 0.3rem;
+}
+
+.options{
+  color:  #662d91;
+  font-size: 1rem;
+  width: 6rem;
+  height: 2.5rem;
+  background-color:  #d6d6f7;
+  align-self: center;
+  border-radius: 0.3rem;
+  font-weight: 600;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.back-button{
+  position: relative;
+  top: 10rem;
+  width: 7rem;
+  height: 3rem;
+  border-radius: 0.4rem;
+  border: none;
+  background-color: #662d91;
+  color: white;
+  cursor: pointer;
 }

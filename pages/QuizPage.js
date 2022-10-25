@@ -1,8 +1,17 @@
 import React from 'react'
+import { useSelector } from 'react-redux'
 import useAxios from "../components/useAxios"
+import { selectAmountOfQuestion, selectCategory, selectDifficulty, selectScore, selectType } from '../redux/slices/quizSlice'
 
 
 const QuizPage = () => {
+  const amount_of_questions = useSelector((selectAmountOfQuestion))
+  const questions_category = useSelector(selectCategory)
+  const questions_difficulty = useSelector(selectDifficulty)
+  const questions_type = useSelector(selectType)
+  const score = useSelector(selectScore)
+
+  console.log(score)
 
   let apiUrl = `/api.php?amount=10`
 

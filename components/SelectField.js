@@ -9,19 +9,27 @@ const SelectField = (props) => {
 
     const handleChange = (e) =>{
       setValue(e.target.value)
-      switch(label){
-        case "Category":
-          dispatch(changeCategory(e.target.value));
-          break;
-        case "Difficulty":
-          dispatch(changeDifficulty(e.target.value));
-          break;
-        case "Type":
-          dispatch(changeType(e.target.value));
-          break;
-        default:
-          return;
+      // switch(label){
+      //   case "Category":
+      //     dispatch(changeCategory(e.target.value));
+      //     break;
+      //   case "Difficulty":
+      //     dispatch(changeDifficulty(e.target.value));
+      //     break;
+      //   case "Type":
+      //     dispatch(changeType(e.target.value));
+      //     break;
+      //   default:
+      //     return;
+      if(label === "Catergory"){
+        dispatch(changeCategory(e.target.value))
       }
+      if(label === "Difficulty"){
+        dispatch(changeDifficulty(e.target.value))
+      }
+      if(label === "Type"){
+        dispatch(changeType(e.target.value))
+      }      
      }
   return (
     <div className='selectForm'>

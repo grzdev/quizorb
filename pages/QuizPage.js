@@ -11,7 +11,7 @@ const QuizPage = () => {
   const questions_type = useSelector(selectType)
   const score = useSelector(selectScore)
 
-  console.log(score)
+  console.log(amount_of_questions, questions_category, questions_difficulty, questions_type)
 
   let apiUrl = `/api.php?amount=10`
 

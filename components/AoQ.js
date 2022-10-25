@@ -1,12 +1,8 @@
-import React from 'react'
-import { useDispatch } from 'react-redux'
-import { handleAmountChange } from '../redux/actions'
+
+import { useDispatch } from 'react-redux' 
 
 const AoQ = () => {
-  const dispatch = useDispatch
-    const handleChange = (e) =>{
-      dispatch(handleAmountChange(e.target.value))
-    }
+  const handleChange = (e) =>{}
 
   return (
     <input 

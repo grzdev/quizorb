@@ -1,16 +1,8 @@
 import React from 'react'
-import { useSelector } from 'react-redux'
 import useAxios from "../components/useAxios"
 
 
 const QuizPage = () => {
-  const {
-    question_category,
-    question_difficulty,
-    question_types,
-    amount_of_question
-  } = useSelector((state) => state)
-  console.log(question_category, question_difficulty, question_types, amount_of_question)
 
   let apiUrl = `/api.php?amount=10`
 

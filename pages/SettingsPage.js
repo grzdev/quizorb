@@ -44,9 +44,9 @@ const SettingsPage = () => {
         <BsNutFill className='select-icon'/>
         <h1 className='select-title'>Select Mode</h1>
        <form onSubmit={handleSubmit}>
-        <SelectField options={response.trivia_categories} label="Category: "/>
-        <SelectField options={difficultyOptions} label="Difficulty: "/>
-        <SelectField options={typeOptions} label="Type: "/>
+        <SelectField options={response.trivia_categories} label="Category"/>
+        <SelectField options={difficultyOptions} label="Difficulty"/>
+        <SelectField options={typeOptions} label="Type"/>
         <AoQ/>
        </form>
 

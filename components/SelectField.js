@@ -1,3 +1,4 @@
+import { FormControl, FormLabel, Box, Select } from '@chakra-ui/react'
 import React, { useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { changeCategory, changeDifficulty, changeType } from '../redux/slices/quizSlice'
@@ -9,19 +10,8 @@ const SelectField = (props) => {
 
     const handleChange = (e) =>{
       setValue(e.target.value)
-      // switch(label){
-      //   case "Category":
-      //     dispatch(changeCategory(e.target.value));
-      //     break;
-      //   case "Difficulty":
-      //     dispatch(changeDifficulty(e.target.value));
-      //     break;
-      //   case "Type":
-      //     dispatch(changeType(e.target.value));
-      //     break;
-      //   default:
-      //     return;
-      if(label === "Catergory"){
+      
+      if(label === "Category"){
         dispatch(changeCategory(e.target.value))
       }
       if(label === "Difficulty"){
@@ -32,14 +22,16 @@ const SelectField = (props) => {
       }      
      }
   return (
-    <div className='selectForm'>
-        <label>{label}</label>
-        <select value={value} label={label} onChange={handleChange}>
-            {options.map(({id, name})=>(
-              <option value={id} key={id}>{name}</option>
-            ))}
-        </select>
-    </div>
+    <Box mt="0.8rem">
+      <FormControl display="flex" flexDir="column" justifyContent="center" alignItems="center">
+        <FormLabel color="white" mb="-0.001rem">{label}</FormLabel>
+        <Select w='12rem' bg="#d6d6f7" value={value} label={label} onChange={handleChange}>
+          {options.map(({id, name})=>(
+            <option value={id} key={id}>{name}</option>
+          ))}
+        </Select>
+      </FormControl>
+    </Box>
   )
 }
 

@@ -77,9 +77,32 @@ async function readJsonBodyFallback(req, label) {
         throw new Error(`Invalid JSON body: ${err.message}`);
     }
 }
+async function getJsonObjectBody(req, res, label) {
+    let body = req.body;
+    if (body === undefined) {
+        try {
+            body = await readJsonBodyFallback(req, label);
+            console.log(`[${label}] fallback parsed body:`, body);
+        }
+        catch (err) {
+            console.error(`[${label}] fallback body parse failed:`, err);
+            res.status(400).json({ error: "Invalid JSON body", details: err.message });
+            return null;
+        }
+    }
+    if (body === null || typeof body !== "object" || Array.isArray(body)) {
+        console.error(`[${label}] body check failed — typeof:`, typeof body, "| value:", body);
+        res.status(400).json({ error: "Missing JSON body" });
+        return null;
+    }
+    return body;
+}
 // POST /api/quizzes/generate
-app.post("/api/quizzes/generate", (req, res) => {
-    const { topic, count } = req.body;
+app.post("/api/quizzes/generate", async (req, res) => {
+    const body = await getJsonObjectBody(req, res, "quizzes/generate");
+    if (!body)
+        return;
+    const { topic, count } = body;
     if (!topic || !count) {
         res.status(400).json({ error: "topic and count are required" });
         return;
@@ -101,23 +124,9 @@ app.post("/api/quizzes/groq-generate", async (req, res) => {
     console.log(`[quizzes/groq-generate] content-length: ${req.headers["content-length"]}`);
     console.log(`[quizzes/groq-generate] GROQ_API_KEY exists: ${!!process.env.GROQ_API_KEY}`);
     console.log("[quizzes/groq-generate] body:", req.body);
-    let body = req.body;
-    if (body === undefined) {
-        try {
-            body = await readJsonBodyFallback(req, "quizzes/groq-generate");
-            console.log("[quizzes/groq-generate] fallback parsed body:", body);
-        }
-        catch (err) {
-            console.error("[quizzes/groq-generate] fallback body parse failed:", err);
-            res.status(400).json({ error: "Invalid JSON body", details: err.message });
-            return;
-        }
-    }
-    if (body === null || body === undefined || typeof body !== "object" || Array.isArray(body)) {
-        console.error("[quizzes/groq-generate] body check failed — typeof:", typeof body, "| value:", body);
-        res.status(400).json({ error: "Missing JSON body" });
+    const body = await getJsonObjectBody(req, res, "quizzes/groq-generate");
+    if (!body)
         return;
-    }
     const { topic, count } = body;
     console.log(`[quizzes/groq-generate] topic: ${JSON.stringify(topic)} | count: ${JSON.stringify(count)}`);
     if (topic === undefined || topic === null || typeof topic !== "string" || !topic.trim()) {
@@ -227,8 +236,11 @@ app.get("/api/packs/:pack", (req, res) => {
     res.json({ pack: PACK_META[id], questions });
 });
 // POST /api/rooms/create
-app.post("/api/rooms/create", (req, res) => {
-    const { questions, mode, hostMode, socialModeType, hostAnswers, quizSource } = req.body;
+app.post("/api/rooms/create", async (req, res) => {
+    const body = await getJsonObjectBody(req, res, "rooms/create");
+    if (!body)
+        return;
+    const { questions, mode, hostMode, socialModeType, hostAnswers, quizSource } = body;
     if (!questions || !Array.isArray(questions) || questions.length === 0) {
         res.status(400).json({ error: "questions array is required" });
         return;
@@ -251,6 +263,22 @@ app.get("/api/rooms/:roomCode", (req, res) => {
     const { quiz: _quiz, usedQuestionTexts: _used, ...safeRoom } = room;
     res.json(safeRoom);
 });
+app.use(((err, req, res, _next) => {
+    console.error(`[api] unhandled error on ${req.method} ${req.path}:`, err);
+    if (res.headersSent)
+        return;
+    const status = typeof err?.status === "number" ? err.status : 500;
+    const details = err instanceof Error ? err.message : String(err);
+    const isJsonParseError = err?.type === "entity.parse.failed";
+    if (req.path.startsWith("/api/")) {
+        res.status(isJsonParseError ? 400 : status).json({
+            error: isJsonParseError ? "Invalid JSON body" : status >= 500 ? "Internal server error" : "Request failed",
+            details,
+        });
+        return;
+    }
+    res.status(isJsonParseError ? 400 : status).send(isJsonParseError ? "Invalid JSON body" : "Internal Server Error");
+}));
 const httpServer = createServer(app);
 const io = new Server(httpServer, {
     cors: {

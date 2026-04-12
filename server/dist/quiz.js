@@ -1,4 +1,4 @@
-import { shuffle } from "./utils.js";
+import { shuffle, shuffleOptions } from "./utils.js";
 // ---------------------------------------------------------------------------
 // Dataset
 // Schema: { topic, text, options[], correctIndex, timeLimit }
@@ -163,15 +163,29 @@ const dataset = [
  * Returns `count` shuffled questions for the given topic.
  * Throws if the topic has fewer questions than requested.
  */
-export function generateQuiz(topic, count) {
-    const pool = dataset.filter((q) => q.topic === topic);
-    if (pool.length < count) {
-        throw new Error(`Not enough questions for topic "${topic}": requested ${count}, available ${pool.length}`);
+export function generateQuiz(topic, count, exclude) {
+    const raw = dataset.filter((q) => q.topic === topic);
+    // Deduplicate by prompt text so the same question never appears twice in one game
+    const seen = new Set();
+    const pool = raw.filter((q) => {
+        if (seen.has(q.text))
+            return false;
+        seen.add(q.text);
+        return true;
+    });
+    // Prefer questions not seen in previous rounds; fall back to used ones to fill the count
+    const normalise = (t) => t.toLowerCase().trim();
+    const preferred = exclude ? pool.filter((q) => !exclude.has(normalise(q.text))) : pool;
+    const fallback = exclude ? pool.filter((q) => exclude.has(normalise(q.text))) : [];
+    const combined = preferred.length >= count ? preferred : [...preferred, ...fallback];
+    if (combined.length === 0) {
+        throw new Error(`Not enough unique questions for topic "${topic}": requested ${count}, available ${pool.length}`);
     }
     // Shallow-copy before shuffling so the dataset order is preserved
-    const shuffled = shuffle([...pool]);
+    const shuffled = shuffle([...combined]);
     const selected = shuffled.slice(0, count);
     // Strip "topic" before returning — callers only need Question fields
-    return selected.map(({ topic: _topic, ...q }) => q);
+    // Shuffle options so the correct answer position varies per question
+    return selected.map(({ topic: _topic, ...q }) => shuffleOptions(q));
 }
 //# sourceMappingURL=quiz.js.map

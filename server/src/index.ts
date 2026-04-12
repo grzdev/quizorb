@@ -28,6 +28,7 @@ const ALLOWED_MIMETYPES = new Set([
   "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
   "text/plain",
 ]);
+const MAX_JSON_BODY_BYTES = 100 * 1024;
 
 const upload = multer({
   storage: multer.memoryStorage(),
@@ -53,6 +54,49 @@ const app = express();
 app.use(cors({ origin: ALLOWED_ORIGINS }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+async function readJsonBodyFallback(req: express.Request, label: string): Promise<unknown> {
+  if (req.readableEnded) {
+    console.warn(`[${label}] request stream already ended before fallback parsing`);
+    return undefined;
+  }
+
+  const chunks: Buffer[] = [];
+  let totalBytes = 0;
+
+  await new Promise<void>((resolve, reject) => {
+    req.on("data", (chunk: Buffer | string) => {
+      const buffer = Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk);
+      totalBytes += buffer.length;
+
+      if (totalBytes > MAX_JSON_BODY_BYTES) {
+        reject(new Error("JSON body is too large"));
+        return;
+      }
+
+      chunks.push(buffer);
+    });
+
+    req.on("end", resolve);
+    req.on("error", reject);
+  });
+
+  if (chunks.length === 0) {
+    console.warn(`[${label}] fallback parser saw an empty request stream`);
+    return undefined;
+  }
+
+  const raw = Buffer.concat(chunks).toString("utf8").trim();
+  console.log(`[${label}] raw fallback body:`, raw);
+
+  if (!raw) return undefined;
+
+  try {
+    return JSON.parse(raw);
+  } catch (err) {
+    throw new Error(`Invalid JSON body: ${(err as Error).message}`);
+  }
+}
 
 // POST /api/quizzes/generate
 app.post("/api/quizzes/generate", (req, res) => {
@@ -81,7 +125,18 @@ app.post("/api/quizzes/groq-generate", async (req, res) => {
   console.log(`[quizzes/groq-generate] GROQ_API_KEY exists: ${!!process.env.GROQ_API_KEY}`);
   console.log("[quizzes/groq-generate] body:", req.body);
 
-  const body: unknown = req.body;
+  let body: unknown = req.body;
+  if (body === undefined) {
+    try {
+      body = await readJsonBodyFallback(req, "quizzes/groq-generate");
+      console.log("[quizzes/groq-generate] fallback parsed body:", body);
+    } catch (err) {
+      console.error("[quizzes/groq-generate] fallback body parse failed:", err);
+      res.status(400).json({ error: "Invalid JSON body", details: (err as Error).message });
+      return;
+    }
+  }
+
   if (body === null || body === undefined || typeof body !== "object" || Array.isArray(body)) {
     console.error("[quizzes/groq-generate] body check failed — typeof:", typeof body, "| value:", body);
     res.status(400).json({ error: "Missing JSON body" });

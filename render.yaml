@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: quizdrop-server
+    env: node
+    rootDir: server
+    plan: free
+    autoDeploy: true
+    buildCommand: pnpm install --frozen-lockfile && pnpm build
+    startCommand: pnpm start
+    envVars:
+      - key: GROQ_API_KEY
+        sync: false

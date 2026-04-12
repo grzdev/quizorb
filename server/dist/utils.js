@@ -9,4 +9,16 @@ export function shuffle(array) {
     }
     return array;
 }
+/**
+ * Returns a copy of a question with its options shuffled into a random order
+ * and correctIndex updated to match the new position of the correct answer.
+ */
+export function shuffleOptions(q) {
+    const correctAnswer = q.options[q.correctIndex];
+    if (correctAnswer === undefined) {
+        throw new Error(`shuffleOptions: correctIndex ${q.correctIndex} is out of bounds (options.length=${q.options.length})`);
+    }
+    const shuffled = shuffle([...q.options]);
+    return { ...q, options: shuffled, correctIndex: shuffled.indexOf(correctAnswer) };
+}
 //# sourceMappingURL=utils.js.map

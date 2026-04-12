@@ -16,6 +16,9 @@ export function shuffle<T>(array: T[]): T[] {
  */
 export function shuffleOptions<T extends { options: string[]; correctIndex: number }>(q: T): T {
   const correctAnswer = q.options[q.correctIndex];
+  if (correctAnswer === undefined) {
+    throw new Error(`shuffleOptions: correctIndex ${q.correctIndex} is out of bounds (options.length=${q.options.length})`);
+  }
   const shuffled = shuffle([...q.options]);
   return { ...q, options: shuffled, correctIndex: shuffled.indexOf(correctAnswer) };
 }

@@ -1,0 +1,4 @@
+[build]
+  base = "client"
+  command = "pnpm build"
+  publish = "dist"

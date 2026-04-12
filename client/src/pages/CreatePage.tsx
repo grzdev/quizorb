@@ -151,7 +151,7 @@ export default function CreatePage() {
         : TOPIC_OPTIONS.find((o) => o.value === topic)?.label ?? topic
       const topicStr: string = String(topicLabel)
       const count: number = Number(triviaCount)
-      console.log("groq request payload", { topic: topicStr, count })
+      console.log("groq payload", { topic: topicStr, count })
       const res = await fetch(`${API_BASE}/api/quizzes/groq-generate`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },

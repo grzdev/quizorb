@@ -74,16 +74,18 @@ app.post("/api/quizzes/generate", (req, res) => {
 // POST /api/quizzes/groq-generate
 app.post("/api/quizzes/groq-generate", async (req, res) => {
   console.log("[quizzes/groq-generate] route hit");
+  console.log(`[quizzes/groq-generate] content-type: ${req.headers["content-type"]}`);
+  console.log(`[quizzes/groq-generate] GROQ_API_KEY exists: ${!!process.env.GROQ_API_KEY}`);
 
   const body: unknown = req.body;
   if (body === null || body === undefined || typeof body !== "object" || Array.isArray(body)) {
+    console.error("[quizzes/groq-generate] body check failed — typeof:", typeof body, "| value:", body);
     res.status(400).json({ error: "Missing JSON body" });
     return;
   }
 
   const { topic, count } = body as Record<string, unknown>;
   console.log(`[quizzes/groq-generate] topic: ${JSON.stringify(topic)} | count: ${JSON.stringify(count)}`);
-  console.log(`[quizzes/groq-generate] GROQ_API_KEY exists: ${!!process.env.GROQ_API_KEY}`);
 
   if (topic === undefined || topic === null || typeof topic !== "string" || !topic.trim()) {
     res.status(400).json({ error: "topic is required and must be a non-empty string" });

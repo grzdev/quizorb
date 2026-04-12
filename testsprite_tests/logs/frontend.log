@@ -1,0 +1,9 @@
+'\"C:\Users\raiden\quizdrop\client\node_modules\.bin\vite.cmd\"' is not recognized as an internal or external command,
+operable program or batch file.
+
+=== 2026-04-12T19:29:49.553Z :: npm run preview -- --port 5173 --host 127.0.0.1 ===
+
+> client@0.0.0 preview
+> vite preview --port 5173 --host 127.0.0.1
+
+  [32m➜[39m  [1mLocal[22m:   [36mhttp://127.0.0.1:[1m5173[22m/[39m

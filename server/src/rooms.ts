@@ -130,7 +130,7 @@ export function leaveRoom(roomCode: string, playerId: string): Room | undefined 
 
   room.players = room.players.filter((p) => p.id !== playerId);
 
-  if (room.players.length === 0) {
+  if (room.players.length === 0 && !room.hostSocketId) {
     rooms.delete(roomCode);
     return undefined;
   }
@@ -138,16 +138,34 @@ export function leaveRoom(roomCode: string, playerId: string): Room | undefined 
   return room;
 }
 
-/** Mark a player as disconnected without removing them from the room. */
-export function markPlayerDisconnected(roomCode: string, playerId: string): Room | undefined {
+/** Reset a room to lobby state so the same room can be replayed safely. */
+export function resetRoomForReplay(room: Room): Room {
+  room.status = "lobby";
+  room.currentQuestionIndex = 0;
+  delete room.targetPlayerId;
+  room.players = room.players.filter((p) => p.connected);
+  room.players.forEach((p) => {
+    p.score = 0;
+  });
+  return room;
+}
+
+/** Mark a connected socket as disconnected without removing the room immediately. */
+export function markPlayerDisconnected(roomCode: string, socketId: string): Room | undefined {
   const room = rooms.get(roomCode);
   if (!room) return undefined;
 
-  const player = room.players.find((p) => p.id === playerId);
+  const player = room.players.find((p) => p.id === socketId);
   if (player) player.connected = false;
+  if (room.hostSocketId === socketId) {
+    delete room.hostSocketId;
+  }
 
-  // If no connected players remain, clean up the room
-  if (room.players.every((p) => !p.connected)) {
+  const hasConnectedPlayer = room.players.some((p) => p.connected);
+  const hasConnectedHost = room.hostSocketId !== undefined;
+
+  // If no connected players or host remain, clean up the room.
+  if (!hasConnectedPlayer && !hasConnectedHost) {
     rooms.delete(roomCode);
     return undefined;
   }
@@ -155,10 +173,10 @@ export function markPlayerDisconnected(roomCode: string, playerId: string): Room
   return room;
 }
 
-/** Returns the room code a socket is currently in, if any. */
+/** Returns the room a socket is currently associated with, if any. */
 export function findRoomByPlayer(playerId: string): Room | undefined {
   for (const room of rooms.values()) {
-    if (room.players.some((p) => p.id === playerId)) return room;
+    if (room.hostSocketId === playerId || room.players.some((p) => p.id === playerId)) return room;
   }
   return undefined;
 }

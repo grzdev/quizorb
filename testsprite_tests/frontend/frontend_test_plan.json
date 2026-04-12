@@ -1,0 +1,1465 @@
+[
+  {
+    "id": "TC001",
+    "title": "Host triggers Play Again and returns to lobby for a new run",
+    "description": "Verifies that after a game ends the host can reset the room and the UI returns to the lobby ready to start again.",
+    "category": "Play again reset",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /create"
+      },
+      {
+        "type": "action",
+        "description": "Select the trivia preset topic generation mode"
+      },
+      {
+        "type": "action",
+        "description": "Select a preset topic"
+      },
+      {
+        "type": "action",
+        "description": "Generate the quiz questions"
+      },
+      {
+        "type": "action",
+        "description": "Proceed to create a room from the reviewed quiz"
+      },
+      {
+        "type": "action",
+        "description": "Start the game from the host room"
+      },
+      {
+        "type": "action",
+        "description": "For each question, wait for the question to be displayed"
+      },
+      {
+        "type": "action",
+        "description": "For each question, submit any answer option before time expires"
+      },
+      {
+        "type": "action",
+        "description": "Continue after each leaderboard screen until the quiz completes"
+      },
+      {
+        "type": "action",
+        "description": "Choose to play again from the finished state"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the host room returns to the lobby state"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC002",
+    "title": "Player waits in lobby and receives a question when the game starts",
+    "description": "Verifies a player in the lobby sees the first question screen once the host starts the game.",
+    "category": "Real-time gameplay and answer submission",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /create"
+      },
+      {
+        "type": "action",
+        "description": "Select the trivia preset topic generation option"
+      },
+      {
+        "type": "action",
+        "description": "Generate a quiz using a preset topic"
+      },
+      {
+        "type": "action",
+        "description": "Proceed to create a room from the generated quiz"
+      },
+      {
+        "type": "action",
+        "description": "Copy the room code from the host lobby"
+      },
+      {
+        "type": "action",
+        "description": "Navigate to /join"
+      },
+      {
+        "type": "action",
+        "description": "Fill the copied room code into the room code field"
+      },
+      {
+        "type": "action",
+        "description": "Fill PLAYER_GAME_01 into the player name field"
+      },
+      {
+        "type": "action",
+        "description": "Submit the join form"
+      },
+      {
+        "type": "action",
+        "description": "Navigate to /create"
+      },
+      {
+        "type": "action",
+        "description": "Proceed to create a room from the generated quiz"
+      },
+      {
+        "type": "action",
+        "description": "Start the game from the host lobby"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the player is shown a question screen with answer options"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC003",
+    "title": "View leaderboard after a timed-out question and continue to next question",
+    "description": "Verifies that after a player times out on a question the leaderboard is shown and the game continues to the next question.",
+    "category": "Leaderboard and finished state",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /create"
+      },
+      {
+        "type": "action",
+        "description": "Select the trivia preset topic generation mode"
+      },
+      {
+        "type": "action",
+        "description": "Select a preset topic"
+      },
+      {
+        "type": "action",
+        "description": "Generate the quiz questions"
+      },
+      {
+        "type": "action",
+        "description": "Proceed to create a room from the reviewed quiz"
+      },
+      {
+        "type": "action",
+        "description": "Start the game from the host room"
+      },
+      {
+        "type": "action",
+        "description": "Wait for the first question to be displayed"
+      },
+      {
+        "type": "action",
+        "description": "Wait for the question timer to expire without submitting an answer"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the leaderboard is displayed with ranks and scores"
+      },
+      {
+        "type": "action",
+        "description": "Continue to the next question"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the next question is displayed"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC004",
+    "title": "Submit an answer and see interim leaderboard update",
+    "description": "Verifies that submitting an answer results in an interim leaderboard view being shown with updated ranking information.",
+    "category": "Leaderboard and finished state",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /create"
+      },
+      {
+        "type": "action",
+        "description": "Select the trivia preset topic generation mode"
+      },
+      {
+        "type": "action",
+        "description": "Select a preset topic"
+      },
+      {
+        "type": "action",
+        "description": "Generate the quiz questions"
+      },
+      {
+        "type": "action",
+        "description": "Proceed to create a room from the reviewed quiz"
+      },
+      {
+        "type": "action",
+        "description": "Start the game from the host room"
+      },
+      {
+        "type": "action",
+        "description": "Wait for the first question to be displayed"
+      },
+      {
+        "type": "action",
+        "description": "Select an answer option"
+      },
+      {
+        "type": "action",
+        "description": "Submit the answer"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the leaderboard is displayed with rank and score delta information"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC005",
+    "title": "Player can submit one answer for a question",
+    "description": "Verifies a player can select an answer and submit once, then is advanced out of the active answering state.",
+    "category": "Real-time gameplay and answer submission",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /create"
+      },
+      {
+        "type": "action",
+        "description": "Select the trivia preset topic generation option"
+      },
+      {
+        "type": "action",
+        "description": "Generate a quiz using a preset topic"
+      },
+      {
+        "type": "action",
+        "description": "Proceed to create a room from the generated quiz"
+      },
+      {
+        "type": "action",
+        "description": "Copy the room code from the host lobby"
+      },
+      {
+        "type": "action",
+        "description": "Navigate to /join"
+      },
+      {
+        "type": "action",
+        "description": "Fill the copied room code into the room code field"
+      },
+      {
+        "type": "action",
+        "description": "Fill PLAYER_GAME_02 into the player name field"
+      },
+      {
+        "type": "action",
+        "description": "Submit the join form"
+      },
+      {
+        "type": "action",
+        "description": "Navigate to /create"
+      },
+      {
+        "type": "action",
+        "description": "Proceed to create a room from the generated quiz"
+      },
+      {
+        "type": "action",
+        "description": "Start the game from the host lobby"
+      },
+      {
+        "type": "action",
+        "description": "Select an answer option"
+      },
+      {
+        "type": "action",
+        "description": "Submit the answer"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the player is no longer able to change or submit another answer for the same question"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC006",
+    "title": "Play Again allows starting a new game after reset",
+    "description": "Verifies that after the host resets a finished room, the host can start the game again and questions are delivered for the new run.",
+    "category": "Play again reset",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /create"
+      },
+      {
+        "type": "action",
+        "description": "Select the trivia preset topic generation mode"
+      },
+      {
+        "type": "action",
+        "description": "Select a preset topic"
+      },
+      {
+        "type": "action",
+        "description": "Generate the quiz questions"
+      },
+      {
+        "type": "action",
+        "description": "Proceed to create a room from the reviewed quiz"
+      },
+      {
+        "type": "action",
+        "description": "Start the game from the host room"
+      },
+      {
+        "type": "action",
+        "description": "For each question, wait for the question to be displayed"
+      },
+      {
+        "type": "action",
+        "description": "For each question, submit any answer option before time expires"
+      },
+      {
+        "type": "action",
+        "description": "Continue after each leaderboard screen until the quiz completes"
+      },
+      {
+        "type": "action",
+        "description": "Choose to play again from the finished state"
+      },
+      {
+        "type": "action",
+        "description": "Start the game from the lobby state"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify a question is displayed for the new game run"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC007",
+    "title": "Reach game finished state and view final standings",
+    "description": "Verifies that after progressing through all questions the game ends and the final standings are displayed.",
+    "category": "Leaderboard and finished state",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /create"
+      },
+      {
+        "type": "action",
+        "description": "Select the trivia preset topic generation mode"
+      },
+      {
+        "type": "action",
+        "description": "Select a preset topic"
+      },
+      {
+        "type": "action",
+        "description": "Generate the quiz questions"
+      },
+      {
+        "type": "action",
+        "description": "Proceed to create a room from the reviewed quiz"
+      },
+      {
+        "type": "action",
+        "description": "Start the game from the host room"
+      },
+      {
+        "type": "action",
+        "description": "For each question, wait for the question to be displayed"
+      },
+      {
+        "type": "action",
+        "description": "For each question, submit any answer option before time expires"
+      },
+      {
+        "type": "action",
+        "description": "Continue after each leaderboard screen until the quiz completes"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the finished state is displayed with final standings"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC008",
+    "title": "Create a room after questions are ready (host plays)",
+    "description": "Verifies a host can enter required metadata, choose to play, create a room, and arrive at the host lobby showing a room code.",
+    "category": "Room creation",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /create"
+      },
+      {
+        "type": "action",
+        "description": "Select Custom mode"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the question text with \"2+2?\""
+      },
+      {
+        "type": "action",
+        "description": "Fill four answer options with \"3\", \"4\", \"5\", and \"6\""
+      },
+      {
+        "type": "action",
+        "description": "Mark \"4\" as the correct answer"
+      },
+      {
+        "type": "action",
+        "description": "Continue to the review step"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the quiz title with \"Math Quick Quiz\""
+      },
+      {
+        "type": "action",
+        "description": "Fill in the host name with \"HostPlayer\""
+      },
+      {
+        "type": "action",
+        "description": "Choose the host role to play"
+      },
+      {
+        "type": "action",
+        "description": "Create the room"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the host lobby is displayed with a generated room code"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC009",
+    "title": "Join via deep link with prefilled room code",
+    "description": "Verifies a player can open a deep link with a prefilled room code, enter a name, and join to reach the player room screen.",
+    "category": "Join by code or deep link",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /join?code=ROOM01"
+      },
+      {
+        "type": "action",
+        "description": "Fill PLAYER01 into the player name field"
+      },
+      {
+        "type": "action",
+        "description": "Submit the join form"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the player lands on the player room screen"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC010",
+    "title": "Host sees lobby presence update when a player joins",
+    "description": "Verifies that when a player joins the room, the host lobby updates to show the new participant in the list.",
+    "category": "Lobby sharing and multiplayer presence",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /create"
+      },
+      {
+        "type": "action",
+        "description": "Select the trivia preset topic generation option"
+      },
+      {
+        "type": "action",
+        "description": "Generate a quiz using a preset topic"
+      },
+      {
+        "type": "action",
+        "description": "Proceed to create a room from the generated quiz"
+      },
+      {
+        "type": "action",
+        "description": "Copy the room code from the host lobby"
+      },
+      {
+        "type": "action",
+        "description": "Navigate to /join"
+      },
+      {
+        "type": "action",
+        "description": "Fill the copied room code into the room code field"
+      },
+      {
+        "type": "action",
+        "description": "Fill PLAYER_LOBBY_01 into the player name field"
+      },
+      {
+        "type": "action",
+        "description": "Submit the join form"
+      },
+      {
+        "type": "action",
+        "description": "Navigate to /create"
+      },
+      {
+        "type": "action",
+        "description": "Proceed to create a room from the generated quiz"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the host lobby participant list reflects at least one joined player"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC011",
+    "title": "Generate trivia set from preset topic and reach review",
+    "description": "Verifies a host can generate a trivia question set using a preset topic and proceed to the review step.",
+    "category": "Trivia generation from preset topics",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /create"
+      },
+      {
+        "type": "action",
+        "description": "Fill a quiz title into the quiz title field"
+      },
+      {
+        "type": "action",
+        "description": "Fill a host name into the host name field"
+      },
+      {
+        "type": "action",
+        "description": "Select Trivia mode"
+      },
+      {
+        "type": "action",
+        "description": "Select a preset topic"
+      },
+      {
+        "type": "action",
+        "description": "Select a question count"
+      },
+      {
+        "type": "action",
+        "description": "Submit the generate questions action"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify a generated question set review is displayed"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC012",
+    "title": "Generate trivia questions from a supported uploaded file",
+    "description": "Verifies a host can upload a supported document, generate trivia questions from it, and reach the review screen with generated questions displayed.",
+    "category": "Trivia generation from uploaded file",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /create"
+      },
+      {
+        "type": "action",
+        "description": "Select Trivia mode"
+      },
+      {
+        "type": "action",
+        "description": "Switch the trivia source to File"
+      },
+      {
+        "type": "action",
+        "description": "Choose a supported local file from the file picker"
+      },
+      {
+        "type": "action",
+        "description": "Select a question count"
+      },
+      {
+        "type": "action",
+        "description": "Generate questions from the file"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the question review screen is displayed with generated questions"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC013",
+    "title": "Player is auto-submitted with no answer on timeout",
+    "description": "Verifies that if a player does not answer before time runs out, the UI transitions as if a no-answer submission occurred.",
+    "category": "Real-time gameplay and answer submission",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /create"
+      },
+      {
+        "type": "action",
+        "description": "Select the trivia preset topic generation option"
+      },
+      {
+        "type": "action",
+        "description": "Generate a quiz using a preset topic"
+      },
+      {
+        "type": "action",
+        "description": "Proceed to create a room from the generated quiz"
+      },
+      {
+        "type": "action",
+        "description": "Copy the room code from the host lobby"
+      },
+      {
+        "type": "action",
+        "description": "Navigate to /join"
+      },
+      {
+        "type": "action",
+        "description": "Fill the copied room code into the room code field"
+      },
+      {
+        "type": "action",
+        "description": "Fill PLAYER_GAME_03 into the player name field"
+      },
+      {
+        "type": "action",
+        "description": "Submit the join form"
+      },
+      {
+        "type": "action",
+        "description": "Navigate to /create"
+      },
+      {
+        "type": "action",
+        "description": "Proceed to create a room from the generated quiz"
+      },
+      {
+        "type": "action",
+        "description": "Start the game from the host lobby"
+      },
+      {
+        "type": "action",
+        "description": "Wait for the question timer to expire without selecting an answer"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the player transitions out of the active answering state after timeout"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC014",
+    "title": "Generate trivia set from custom AI prompt and reach review",
+    "description": "Verifies a host can enter a custom AI prompt, generate trivia questions, and reach the review step.",
+    "category": "Trivia generation from custom AI prompt",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /create"
+      },
+      {
+        "type": "action",
+        "description": "Select Trivia mode"
+      },
+      {
+        "type": "action",
+        "description": "Switch the trivia source to AI prompt"
+      },
+      {
+        "type": "action",
+        "description": "Fill a custom topic prompt into the prompt field"
+      },
+      {
+        "type": "action",
+        "description": "Select a question count"
+      },
+      {
+        "type": "action",
+        "description": "Submit the generate questions action"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify a generated question set review is displayed"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC015",
+    "title": "Lobby share actions are available in host lobby",
+    "description": "Verifies the host lobby exposes share affordances so the host can copy the room code and access a direct join link to share.",
+    "category": "Lobby sharing and multiplayer presence",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /create"
+      },
+      {
+        "type": "action",
+        "description": "Select the trivia preset topic generation option"
+      },
+      {
+        "type": "action",
+        "description": "Generate a quiz using a preset topic"
+      },
+      {
+        "type": "action",
+        "description": "Proceed to create a room from the generated quiz"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the host lobby shows share options for room code and a direct join link"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC016",
+    "title": "Prevent double submission from changing leaderboard flow",
+    "description": "Verifies that rapidly attempting to submit an answer multiple times results in a single submission outcome and the leaderboard flow proceeds normally.",
+    "category": "Leaderboard and finished state",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /create"
+      },
+      {
+        "type": "action",
+        "description": "Select the trivia preset topic generation mode"
+      },
+      {
+        "type": "action",
+        "description": "Select a preset topic"
+      },
+      {
+        "type": "action",
+        "description": "Generate the quiz questions"
+      },
+      {
+        "type": "action",
+        "description": "Proceed to create a room from the reviewed quiz"
+      },
+      {
+        "type": "action",
+        "description": "Start the game from the host room"
+      },
+      {
+        "type": "action",
+        "description": "Wait for the first question to be displayed"
+      },
+      {
+        "type": "action",
+        "description": "Select an answer option"
+      },
+      {
+        "type": "action",
+        "description": "Press Enter repeatedly to attempt to submit multiple times quickly"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the app transitions to a single leaderboard screen for the question"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC017",
+    "title": "Prevent rapid Play Again clicks from breaking reset to lobby",
+    "description": "Verifies that repeatedly activating the reset control results in a single reset outcome and the room returns to the lobby reliably.",
+    "category": "Play again reset",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /create"
+      },
+      {
+        "type": "action",
+        "description": "Select the trivia preset topic generation mode"
+      },
+      {
+        "type": "action",
+        "description": "Select a preset topic"
+      },
+      {
+        "type": "action",
+        "description": "Generate the quiz questions"
+      },
+      {
+        "type": "action",
+        "description": "Proceed to create a room from the reviewed quiz"
+      },
+      {
+        "type": "action",
+        "description": "Start the game from the host room"
+      },
+      {
+        "type": "action",
+        "description": "For each question, wait for the question to be displayed"
+      },
+      {
+        "type": "action",
+        "description": "For each question, submit any answer option before time expires"
+      },
+      {
+        "type": "action",
+        "description": "Continue after each leaderboard screen until the quiz completes"
+      },
+      {
+        "type": "action",
+        "description": "Press Enter repeatedly to activate the play again control multiple times quickly"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the host room returns to the lobby state"
+      }
+    ],
+    "priority": "Medium"
+  },
+  {
+    "id": "TC018",
+    "title": "Start create flow from landing",
+    "description": "Verifies a user can start the game creation journey from the landing page and reach quiz setup.",
+    "category": "Landing and navigation",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Click the create game entry point"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the user lands on the quiz setup page"
+      }
+    ],
+    "priority": "Medium"
+  },
+  {
+    "id": "TC019",
+    "title": "Leaderboard displays without score delta (single participant)",
+    "description": "Verifies that the leaderboard screen renders correctly even when there is only one participant and deltas may be minimal.",
+    "category": "Leaderboard and finished state",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /create"
+      },
+      {
+        "type": "action",
+        "description": "Select the trivia preset topic generation mode"
+      },
+      {
+        "type": "action",
+        "description": "Select a preset topic"
+      },
+      {
+        "type": "action",
+        "description": "Generate the quiz questions"
+      },
+      {
+        "type": "action",
+        "description": "Proceed to create a room from the reviewed quiz"
+      },
+      {
+        "type": "action",
+        "description": "Start the game from the host room"
+      },
+      {
+        "type": "action",
+        "description": "Wait for the first question to be displayed"
+      },
+      {
+        "type": "action",
+        "description": "Wait for the question timer to expire without submitting an answer"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the leaderboard is displayed and shows at least one ranked entry"
+      }
+    ],
+    "priority": "Medium"
+  },
+  {
+    "id": "TC020",
+    "title": "Host lobby shows participants list area",
+    "description": "Verifies the host lobby displays a participants list area so the host can monitor who has joined.",
+    "category": "Lobby sharing and multiplayer presence",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /create"
+      },
+      {
+        "type": "action",
+        "description": "Select the trivia preset topic generation option"
+      },
+      {
+        "type": "action",
+        "description": "Generate a quiz using a preset topic"
+      },
+      {
+        "type": "action",
+        "description": "Proceed to create a room from the generated quiz"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the host lobby displays a participant list section"
+      }
+    ],
+    "priority": "Medium"
+  },
+  {
+    "id": "TC021",
+    "title": "Start join flow from landing",
+    "description": "Verifies a user can start the join journey from the landing page and reach the join form.",
+    "category": "Landing and navigation",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Click the join game entry point"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the user lands on the join page"
+      }
+    ],
+    "priority": "Medium"
+  },
+  {
+    "id": "TC022",
+    "title": "Play Again action is only available after the game is finished",
+    "description": "Verifies that the reset control is not available during lobby or in-progress gameplay and only appears in the finished state.",
+    "category": "Play again reset",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /create"
+      },
+      {
+        "type": "action",
+        "description": "Select the trivia preset topic generation mode"
+      },
+      {
+        "type": "action",
+        "description": "Select a preset topic"
+      },
+      {
+        "type": "action",
+        "description": "Generate the quiz questions"
+      },
+      {
+        "type": "action",
+        "description": "Proceed to create a room from the reviewed quiz"
+      },
+      {
+        "type": "action",
+        "description": "Verify the host lobby is displayed"
+      },
+      {
+        "type": "action",
+        "description": "Start the game from the host room"
+      },
+      {
+        "type": "action",
+        "description": "Wait for the first question to be displayed"
+      },
+      {
+        "type": "action",
+        "description": "Wait for the question timer to expire without submitting an answer"
+      },
+      {
+        "type": "action",
+        "description": "Continue after the leaderboard screen until the quiz completes"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the finished state displays an option to reset and play again"
+      }
+    ],
+    "priority": "Medium"
+  },
+  {
+    "id": "TC023",
+    "title": "Generate a social pack and optionally prefill host answers",
+    "description": "Verifies a host can generate a social pack, optionally prefill host answers, and reach the review screen with the pack questions ready.",
+    "category": "Social and custom quiz creation",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /create"
+      },
+      {
+        "type": "action",
+        "description": "Select Social mode"
+      },
+      {
+        "type": "action",
+        "description": "Generate the social pack"
+      },
+      {
+        "type": "action",
+        "description": "Prefill host answers for the pack"
+      },
+      {
+        "type": "action",
+        "description": "Continue to the pack review step"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the social pack review screen is displayed with generated questions and host-answer inputs filled"
+      }
+    ],
+    "priority": "Medium"
+  },
+  {
+    "id": "TC024",
+    "title": "Edit prefilled code before joining",
+    "description": "Verifies a player can modify the prefilled deep-link room code, then join successfully and reach the player room screen.",
+    "category": "Join by code or deep link",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /join?code=ROOM01"
+      },
+      {
+        "type": "action",
+        "description": "Fill ROOM02 into the room code field"
+      },
+      {
+        "type": "action",
+        "description": "Fill PLAYER02 into the player name field"
+      },
+      {
+        "type": "action",
+        "description": "Submit the join form"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the player lands on the player room screen"
+      }
+    ],
+    "priority": "Medium"
+  },
+  {
+    "id": "TC025",
+    "title": "Change preset topic and regenerate questions",
+    "description": "Verifies a host can switch to a different preset topic and regenerate to get a new reviewable question set.",
+    "category": "Trivia generation from preset topics",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /create"
+      },
+      {
+        "type": "action",
+        "description": "Fill a quiz title into the quiz title field"
+      },
+      {
+        "type": "action",
+        "description": "Fill a host name into the host name field"
+      },
+      {
+        "type": "action",
+        "description": "Select Trivia mode"
+      },
+      {
+        "type": "action",
+        "description": "Select a preset topic"
+      },
+      {
+        "type": "action",
+        "description": "Select a question count"
+      },
+      {
+        "type": "action",
+        "description": "Submit the generate questions action"
+      },
+      {
+        "type": "action",
+        "description": "Change the preset topic selection to a different topic"
+      },
+      {
+        "type": "action",
+        "description": "Submit the generate questions action again"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify a generated question set review is displayed"
+      }
+    ],
+    "priority": "Medium"
+  },
+  {
+    "id": "TC026",
+    "title": "Manually author a custom question set and review it",
+    "description": "Verifies a host can create a custom question with four options, select a correct answer, and reach the review screen showing the authored set.",
+    "category": "Social and custom quiz creation",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /create"
+      },
+      {
+        "type": "action",
+        "description": "Select Custom mode"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the question text with \"Capital of France?\""
+      },
+      {
+        "type": "action",
+        "description": "Fill four answer options with \"Paris\", \"Rome\", \"Berlin\", and \"Madrid\""
+      },
+      {
+        "type": "action",
+        "description": "Mark \"Paris\" as the correct answer"
+      },
+      {
+        "type": "action",
+        "description": "Continue to the question set review step"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the custom question set review screen is displayed with the authored question listed"
+      }
+    ],
+    "priority": "Medium"
+  },
+  {
+    "id": "TC027",
+    "title": "Generate trivia set after changing question count",
+    "description": "Verifies a host can adjust the number of questions for a preset topic and still generate a reviewable question set.",
+    "category": "Trivia generation from preset topics",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /create"
+      },
+      {
+        "type": "action",
+        "description": "Fill a quiz title into the quiz title field"
+      },
+      {
+        "type": "action",
+        "description": "Fill a host name into the host name field"
+      },
+      {
+        "type": "action",
+        "description": "Select Trivia mode"
+      },
+      {
+        "type": "action",
+        "description": "Select a preset topic"
+      },
+      {
+        "type": "action",
+        "description": "Select a question count"
+      },
+      {
+        "type": "action",
+        "description": "Change the question count selection to a different valid count"
+      },
+      {
+        "type": "action",
+        "description": "Submit the generate questions action"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify a generated question set review is displayed"
+      }
+    ],
+    "priority": "Medium"
+  },
+  {
+    "id": "TC028",
+    "title": "Block AI prompt generation when prompt is empty",
+    "description": "Verifies the host cannot generate AI-prompt trivia without entering a prompt and sees inline validation feedback.",
+    "category": "Trivia generation from custom AI prompt",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /create"
+      },
+      {
+        "type": "action",
+        "description": "Select Trivia mode"
+      },
+      {
+        "type": "action",
+        "description": "Switch the trivia source to AI prompt"
+      },
+      {
+        "type": "action",
+        "description": "Select a question count"
+      },
+      {
+        "type": "action",
+        "description": "Submit the generate questions action"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify a prompt validation error is visible"
+      }
+    ],
+    "priority": "Medium"
+  },
+  {
+    "id": "TC029",
+    "title": "Correct join after duplicate name error",
+    "description": "Verifies a player can correct their name after a duplicate-name inline error and then join successfully to reach the player room screen.",
+    "category": "Join by code or deep link",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /join"
+      },
+      {
+        "type": "action",
+        "description": "Fill ROOM01 into the room code field"
+      },
+      {
+        "type": "action",
+        "description": "Fill TAKEN_NAME into the player name field"
+      },
+      {
+        "type": "action",
+        "description": "Submit the join form"
+      },
+      {
+        "type": "action",
+        "description": "Fill UNIQUE_NAME_01 into the player name field"
+      },
+      {
+        "type": "action",
+        "description": "Submit the join form"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the player lands on the player room screen"
+      }
+    ],
+    "priority": "Medium"
+  },
+  {
+    "id": "TC030",
+    "title": "Prevent generation with missing required quiz metadata",
+    "description": "Verifies the host cannot generate preset-topic questions until required fields are completed and sees inline validation feedback.",
+    "category": "Trivia generation from preset topics",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /create"
+      },
+      {
+        "type": "action",
+        "description": "Select Trivia mode"
+      },
+      {
+        "type": "action",
+        "description": "Select a preset topic"
+      },
+      {
+        "type": "action",
+        "description": "Select a question count"
+      },
+      {
+        "type": "action",
+        "description": "Submit the generate questions action"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify a required-field validation error is visible"
+      }
+    ],
+    "priority": "Medium"
+  },
+  {
+    "id": "TC031",
+    "title": "Generate AI prompt trivia after editing the prompt",
+    "description": "Verifies a host can modify the custom AI prompt and still generate a reviewable question set.",
+    "category": "Trivia generation from custom AI prompt",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /create"
+      },
+      {
+        "type": "action",
+        "description": "Select Trivia mode"
+      },
+      {
+        "type": "action",
+        "description": "Switch the trivia source to AI prompt"
+      },
+      {
+        "type": "action",
+        "description": "Fill a custom topic prompt into the prompt field"
+      },
+      {
+        "type": "action",
+        "description": "Fill updated text into the prompt field"
+      },
+      {
+        "type": "action",
+        "description": "Select a question count"
+      },
+      {
+        "type": "action",
+        "description": "Submit the generate questions action"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify a generated question set review is displayed"
+      }
+    ],
+    "priority": "Medium"
+  },
+  {
+    "id": "TC032",
+    "title": "Invalid room code shows inline error",
+    "description": "Verifies submitting the join form with an invalid room code results in an inline invalid-room error and the player remains on the join screen.",
+    "category": "Join by code or deep link",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /join"
+      },
+      {
+        "type": "action",
+        "description": "Fill INVALID into the room code field"
+      },
+      {
+        "type": "action",
+        "description": "Fill PLAYER03 into the player name field"
+      },
+      {
+        "type": "action",
+        "description": "Submit the join form"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify an inline invalid room code error is visible"
+      }
+    ],
+    "priority": "Low"
+  },
+  {
+    "id": "TC033",
+    "title": "Show inline error for unsupported file type before generation",
+    "description": "Verifies selecting an unsupported file type shows an inline file type validation error and prevents file-based generation.",
+    "category": "Trivia generation from uploaded file",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /create"
+      },
+      {
+        "type": "action",
+        "description": "Select Trivia mode"
+      },
+      {
+        "type": "action",
+        "description": "Switch the trivia source to File"
+      },
+      {
+        "type": "action",
+        "description": "Choose an unsupported local file type from the file picker"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify an inline file type validation error is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify file generation cannot be initiated"
+      }
+    ],
+    "priority": "Low"
+  },
+  {
+    "id": "TC034",
+    "title": "Duplicate player name shows inline error",
+    "description": "Verifies joining with a player name already in use shows an inline duplicate-name error and allows the user to try again.",
+    "category": "Join by code or deep link",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /join"
+      },
+      {
+        "type": "action",
+        "description": "Fill ROOM01 into the room code field"
+      },
+      {
+        "type": "action",
+        "description": "Fill TAKEN_NAME into the player name field"
+      },
+      {
+        "type": "action",
+        "description": "Submit the join form"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify an inline duplicate name error is visible"
+      }
+    ],
+    "priority": "Low"
+  },
+  {
+    "id": "TC035",
+    "title": "Room code is normalized to uppercase",
+    "description": "Verifies entering a lowercase room code is normalized and the join attempt proceeds without client-side formatting issues.",
+    "category": "Join by code or deep link",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /join"
+      },
+      {
+        "type": "action",
+        "description": "Fill room01 into the room code field"
+      },
+      {
+        "type": "action",
+        "description": "Fill PLAYER06 into the player name field"
+      },
+      {
+        "type": "action",
+        "description": "Submit the join form"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the player lands on the player room screen"
+      }
+    ],
+    "priority": "Low"
+  }
+]

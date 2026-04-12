@@ -6,6 +6,7 @@ import {
   joinRoom,
   leaveRoom,
   markPlayerDisconnected,
+  resetRoomForReplay,
   type Question,
   type Room,
 } from "./rooms.js";
@@ -21,6 +22,22 @@ import { generateGroqQuiz } from "./services/groqQuiz.js";
 /** Broadcast the full room state to every socket in the room. */
 function broadcastRoom(io: Server, room: Room): void {
   io.to(room.roomCode).emit("room:updated", room);
+}
+
+function clearRoomRoundState(roomCode: string): void {
+  clearQuestionTimer(roomCode);
+  questionStartTimes.delete(roomCode);
+
+  const roomPrefix = `${roomCode}:`;
+  for (const key of answeredMap.keys()) {
+    if (key.startsWith(roomPrefix)) answeredMap.delete(key);
+  }
+  for (const key of liveHostAnswerMap.keys()) {
+    if (key.startsWith(roomPrefix)) liveHostAnswerMap.delete(key);
+  }
+  for (const key of pendingAnswerMap.keys()) {
+    if (key.startsWith(roomPrefix)) pendingAnswerMap.delete(key);
+  }
 }
 
 /** Strip correctIndex from questions before sending to clients. */
@@ -288,7 +305,7 @@ export function registerHandlers(io: Server, socket: Socket): void {
       const room = getRoom(payload.roomCode);
       if (!room) return;
 
-      clearQuestionTimer(room.roomCode);
+      clearRoomRoundState(room.roomCode);
 
       // Archive the current round's questions so next round avoids them
       const normalise = (t: string) => t.toLowerCase().trim();
@@ -317,13 +334,7 @@ export function registerHandlers(io: Server, socket: Socket): void {
         }
       }
 
-      room.status = "lobby";
-      room.currentQuestionIndex = 0;
-      // Remove disconnected players so the new game only waits on active players
-      room.players = room.players.filter((p) => p.connected);
-      room.players.forEach((p) => {
-        p.score = 0;
-      });
+      resetRoomForReplay(room);
       broadcastRoom(io, room);
     })();
   });

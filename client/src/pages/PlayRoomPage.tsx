@@ -7,6 +7,7 @@ import QuestionScreen from '../components/QuestionScreen.tsx'
 import { API_BASE } from '../config.ts'
 import { useSocket } from '../hooks/useSocket.ts'
 import type { Player, QuestionPayload, Room } from '../types.ts'
+import { getFriendlyRoomErrorMessage } from '../utils/roomErrors.ts'
 import styles from './PlayRoomPage.module.css'
 
 type Screen = 'lobby' | 'question' | 'leaderboard' | 'finished'
@@ -28,14 +29,14 @@ export default function PlayRoomPage() {
 
     fetch(`${API_BASE}/api/rooms/${roomCode}`)
       .then((res) => {
-        if (!res.ok) throw new Error('Room not found')
+        if (!res.ok) throw new Error(getFriendlyRoomErrorMessage('Room not found'))
         return res.json() as Promise<Room>
       })
       .then((r) => {
         setRoom(r)
         setPlayers(r.players)
       })
-      .catch((err: Error) => setError(err.message))
+      .catch((err: Error) => setError(getFriendlyRoomErrorMessage(err.message)))
   }, [roomCode])
 
   // Socket event listeners for game progression

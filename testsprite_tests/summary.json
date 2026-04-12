@@ -1,0 +1,5 @@
+{
+  "ok": false,
+  "error": "TestSprite MCP exited early (code=4294967295, signal=null)",
+  "stack": "Error: TestSprite MCP exited early (code=4294967295, signal=null)\n    at ChildProcess.<anonymous> ([stdin]:70:14)\n    at ChildProcess.emit (node:events:508:28)\n    at ChildProcess._handle.onexit (node:internal/child_process:294:12)"
+}

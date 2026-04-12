@@ -92,6 +92,7 @@ export default function HostRoomPage() {
 
     function onRoomUpdated(updated: Room) {
       setRoom(updated)
+      setPlayers(updated.players)
       if (updated.status === 'lobby') {
         setScreen('lobby')
         setQuestion(null)

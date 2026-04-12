@@ -1,0 +1,16 @@
+{
+  "generatedAt": "2026-04-12T22:52:20.807Z",
+  "workflow": "testsprite-codebase-first-planning",
+  "projectRoot": "C:/Users/raiden/quizdrop",
+  "localFrontend": "http://127.0.0.1:5173",
+  "localBackend": "http://127.0.0.1:4000",
+  "executedTests": false,
+  "rebuiltOrRestartedApp": false,
+  "artifacts": [
+    "testsprite_tests/standard_prd.json",
+    "testsprite_tests/testsprite_frontend_test_plan.json",
+    "testsprite_tests/frontend_test_plan.json",
+    "testsprite_tests/tmp/code_summary.yaml",
+    "testsprite_tests/frontend_config_snapshot.json"
+  ]
+}

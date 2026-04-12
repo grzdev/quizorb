@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { useSocket } from '../hooks/useSocket.ts'
 import type { Room } from '../types.ts'
+import { getFriendlyRoomErrorMessage } from '../utils/roomErrors.ts'
 import styles from './JoinPage.module.css'
 
 export default function JoinPage() {
@@ -31,7 +32,7 @@ export default function JoinPage() {
       (res: { error?: string; room?: Room }) => {
         setJoining(false)
         if (res.error) {
-          setError(res.error)
+          setError(getFriendlyRoomErrorMessage(res.error))
           return
         }
         navigate(`/play/${code}`)

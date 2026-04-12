@@ -1,0 +1,493 @@
+/* ═══════════════════════════════════════════════════════════
+   QuizOrb Design System v2
+   ═══════════════════════════════════════════════════════════ */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+
+:root {
+  /* ── Brand ───────────────────────────────────────────────── */
+  --brand:              #6d5ef5;
+  --brand-hover:        #5a4de3;
+  --brand-dim:          rgba(109, 94, 245, 0.11);
+  --brand-soft:         rgba(109, 94, 245, 0.18);
+  --brand-border:       rgba(109, 94, 245, 0.36);
+
+  /* ── Accent (lighter purple — chips, labels, highlights) ─── */
+  --accent:             #a78bfa;
+  --accent-soft:        rgba(167, 139, 250, 0.11);
+  --accent-border:      rgba(167, 139, 250, 0.30);
+
+  /* ── Semantic ────────────────────────────────────────────── */
+  --clr-success:        #22c55e;
+  --clr-success-dim:    rgba(34, 197, 94, 0.10);
+  --clr-success-border: rgba(34, 197, 94, 0.30);
+
+  --clr-warning:        #f59e0b;
+  --clr-warning-dim:    rgba(245, 158, 11, 0.10);
+  --clr-warning-border: rgba(245, 158, 11, 0.30);
+
+  --clr-danger:         #ef4444;
+  --clr-danger-dim:     rgba(239, 68, 68, 0.10);
+  --clr-danger-border:  rgba(239, 68, 68, 0.30);
+
+  /* ── Surface stack ───────────────────────────────────────── */
+  --bg:               #0b0b10;    /* page background              */
+  --surface:          #111117;    /* default card / panel         */
+  --surface-raised:   #16161f;    /* hover state, inner element   */
+  --surface-high:     #1c1c28;    /* tooltip, dropdown, modal     */
+
+  /* ── Borders ─────────────────────────────────────────────── */
+  --border:           rgba(255, 255, 255, 0.07);
+  --border-strong:    rgba(255, 255, 255, 0.12);
+  --border-focus:     rgba(109, 94, 245, 0.52);
+
+  /* ── Text ────────────────────────────────────────────────── */
+  --text:             #eaeaf5;
+  --text-2:           rgba(234, 234, 245, 0.58);
+  --text-3:           rgba(234, 234, 245, 0.34);
+
+  /* ── Legacy aliases (keeps all existing module CSS working) ─ */
+  --clr-primary:        var(--brand);
+  --clr-primary-hover:  var(--brand-hover);
+  --clr-primary-dim:    var(--brand-dim);
+  --clr-primary-border: var(--brand-border);
+  --clr-accent:         var(--accent);
+  --clr-bg:             var(--bg);
+  --clr-surface:        var(--surface);
+  --clr-surface-raised: var(--surface-raised);
+  --clr-border:         var(--border);
+  --clr-border-strong:  var(--border-strong);
+  --clr-text:           var(--text);
+  --clr-text-muted:     var(--text-2);
+
+  /* ── Spacing (8 px base) ─────────────────────────────────── */
+  --sp-1:  0.25rem;   /*  4px */
+  --sp-2:  0.5rem;    /*  8px */
+  --sp-3:  0.75rem;   /* 12px */
+  --sp-4:  1rem;      /* 16px */
+  --sp-5:  1.25rem;   /* 20px */
+  --sp-6:  1.5rem;    /* 24px */
+  --sp-7:  1.75rem;   /* 28px */
+  --sp-8:  2rem;      /* 32px */
+  --sp-10: 2.5rem;    /* 40px */
+  --sp-12: 3rem;      /* 48px */
+
+  /* ── Border radius ───────────────────────────────────────── */
+  --radius-sm:   0.3125rem;  /*  5px */
+  --radius-md:   0.5rem;     /*  8px */
+  --radius-lg:   0.75rem;    /* 12px */
+  --radius-xl:   1rem;       /* 16px */
+  --radius-2xl:  1.375rem;   /* 22px */
+  --radius-full: 9999px;
+
+  /* ── Typography ──────────────────────────────────────────── */
+  --font-sans: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+  --font-mono: ui-monospace, 'Cascadia Code', 'Fira Code', Consolas, monospace;
+
+  /* ── Type scale ──────────────────────────────────────────── */
+  --text-xs:   0.72rem;    /* ~11.5px — labels, eyebrow text     */
+  --text-sm:   0.8125rem;  /* ~13px   — secondary body, captions */
+  --text-base: 0.9375rem;  /* ~15px   — primary body             */
+  --text-lg:   1.0625rem;  /* ~17px   — card headings            */
+  --text-xl:   1.25rem;    /* ~20px   — section headings         */
+  --text-2xl:  1.5625rem;  /* ~25px   — page headings            */
+  --text-3xl:  2rem;       /* ~32px   — display                  */
+
+  /* ── Shadows ─────────────────────────────────────────────── */
+  --shadow-xs:          0 1px 4px  rgba(0, 0, 0, 0.30);
+  --shadow-sm:          0 2px 12px rgba(0, 0, 0, 0.40);
+  --shadow-md:          0 6px 28px rgba(0, 0, 0, 0.50);
+  --shadow-lg:          0 14px 48px rgba(0, 0, 0, 0.60);
+  --shadow-glow:        0 0 20px rgba(109, 94, 245, 0.20);
+  --shadow-glow-strong: 0 0 32px rgba(109, 94, 245, 0.36);
+
+  /* ── Transitions ─────────────────────────────────────────── */
+  --ease:        0.15s ease;
+  --ease-spring: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   BASE RESET
+   ═══════════════════════════════════════════════════════════ */
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html {
+  color-scheme: dark;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-size: 15px;
+  line-height: 1.55;
+  color: var(--text);
+  background: var(--bg);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#root {
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+}
+
+h1, h2, h3, h4 {
+  font-family: var(--font-sans);
+  color: var(--text);
+  margin: 0;
+}
+
+/* ── Global scrollbar ─────────────────────────────────────── */
+::-webkit-scrollbar        { width: 5px; height: 5px; }
+::-webkit-scrollbar-track  { background: transparent; }
+::-webkit-scrollbar-thumb  { background: var(--border-strong); border-radius: var(--radius-full); }
+::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.20); }
+
+/* ═══════════════════════════════════════════════════════════
+   TYPOGRAPHY UTILITIES
+   ═══════════════════════════════════════════════════════════ */
+
+/* Display — hero-scale headings */
+.ds-display {
+  font-size: clamp(2.5rem, 6vw, 4rem);
+  font-weight: 900;
+  line-height: 1.05;
+  letter-spacing: -0.04em;
+  color: var(--text);
+}
+
+/* Section label — ALL CAPS eyebrow above a group */
+.ds-label {
+  font-size: var(--text-xs);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+  color: var(--text-3);
+  margin: 0;
+}
+
+/* Card / panel heading */
+.ds-card-heading {
+  font-size: var(--text-base);
+  font-weight: 700;
+  color: var(--text);
+  margin: 0;
+}
+
+/* Text colour utilities */
+.text-muted  { color: var(--text-2); }
+.text-subtle { color: var(--text-3); }
+.text-accent { color: var(--accent); }
+.text-brand  { color: var(--brand);  }
+.text-success { color: var(--clr-success); }
+.text-warning { color: var(--clr-warning); }
+.text-danger  { color: var(--clr-danger);  }
+
+/* ═══════════════════════════════════════════════════════════
+   BUTTONS
+   ═══════════════════════════════════════════════════════════ */
+
+.btn,
+.btn-primary,
+.btn-secondary,
+.btn-ghost,
+.btn-danger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4375rem;
+  padding: 0.6875rem 1.375rem;
+  border-radius: var(--radius-md);
+  font-family: var(--font-sans);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: 0.005em;
+  text-decoration: none;
+  cursor: pointer;
+  border: 1px solid transparent;
+  outline: none;
+  user-select: none;
+  white-space: nowrap;
+  transition:
+    background  0.15s ease,
+    border-color 0.15s ease,
+    box-shadow  0.15s ease,
+    color       0.15s ease,
+    transform   0.1s  ease,
+    opacity     0.15s ease;
+}
+
+.btn:active:not(:disabled),
+.btn-primary:active:not(:disabled),
+.btn-secondary:active:not(:disabled),
+.btn-ghost:active:not(:disabled),
+.btn-danger:active:not(:disabled) {
+  transform: scale(0.965);
+}
+
+.btn:disabled,
+.btn-primary:disabled,
+.btn-secondary:disabled,
+.btn-ghost:disabled,
+.btn-danger:disabled {
+  opacity: 0.38;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* Primary — brand filled */
+.btn-primary {
+  background: var(--brand);
+  color: #fff;
+  border-color: var(--brand);
+  box-shadow: 0 1px 8px rgba(109, 94, 245, 0.28),
+              inset 0 1px 0 rgba(255, 255, 255, 0.10);
+}
+.btn-primary:hover:not(:disabled) {
+  background: var(--brand-hover);
+  border-color: var(--brand-hover);
+  box-shadow: 0 3px 18px rgba(109, 94, 245, 0.40),
+              inset 0 1px 0 rgba(255, 255, 255, 0.10);
+}
+
+/* Secondary — outlined */
+.btn-secondary {
+  background: transparent;
+  color: var(--text);
+  border-color: var(--border-strong);
+}
+.btn-secondary:hover:not(:disabled) {
+  background: var(--surface-raised);
+  border-color: rgba(255, 255, 255, 0.20);
+}
+
+/* Ghost — low-prominence */
+.btn-ghost {
+  background: transparent;
+  color: var(--text-2);
+  border-color: transparent;
+}
+.btn-ghost:hover:not(:disabled) {
+  color: var(--text);
+  background: var(--surface-raised);
+}
+
+/* Danger */
+.btn-danger {
+  background: var(--clr-danger-dim);
+  color: var(--clr-danger);
+  border-color: var(--clr-danger-border);
+}
+.btn-danger:hover:not(:disabled) {
+  background: rgba(239, 68, 68, 0.18);
+}
+
+/* Size modifiers */
+.btn-lg   { padding: 0.8125rem 1.875rem; font-size: var(--text-base); }
+.btn-sm   { padding: 0.4375rem 0.875rem; font-size: var(--text-xs);   }
+.btn-full { width: 100%; }
+
+/* ═══════════════════════════════════════════════════════════
+   LOADING SPINNER
+   ═══════════════════════════════════════════════════════════ */
+
+@keyframes ds-spin {
+  to { transform: rotate(360deg); }
+}
+
+button[data-loading]::before,
+a[data-loading]::before {
+  content: '';
+  display: inline-block;
+  width: 0.85em;
+  height: 0.85em;
+  border: 2px solid rgba(255, 255, 255, 0.20);
+  border-top-color: currentColor;
+  border-radius: 50%;
+  animation: ds-spin 0.55s linear infinite;
+  flex-shrink: 0;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   CARDS
+   ═══════════════════════════════════════════════════════════ */
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  padding: var(--sp-5);
+  transition: border-color 0.18s ease, box-shadow 0.18s ease;
+}
+.card:hover {
+  border-color: var(--border-strong);
+  box-shadow: var(--shadow-sm);
+}
+
+.card-elevated {
+  background: var(--surface-raised);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-xl);
+  padding: var(--sp-5);
+  box-shadow: var(--shadow-sm);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   BADGES
+   ═══════════════════════════════════════════════════════════ */
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.2rem 0.6rem;
+  border-radius: var(--radius-full);
+  font-size: var(--text-xs);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  line-height: 1.6;
+  border: 1px solid transparent;
+}
+
+.badge-brand {
+  background: var(--brand-dim);
+  border-color: var(--brand-border);
+  color: var(--accent);
+}
+.badge-accent {
+  background: var(--accent-soft);
+  border-color: var(--accent-border);
+  color: var(--accent);
+}
+.badge-success {
+  background: var(--clr-success-dim);
+  border-color: var(--clr-success-border);
+  color: var(--clr-success);
+}
+.badge-warning {
+  background: var(--clr-warning-dim);
+  border-color: var(--clr-warning-border);
+  color: var(--clr-warning);
+}
+.badge-danger {
+  background: var(--clr-danger-dim);
+  border-color: var(--clr-danger-border);
+  color: var(--clr-danger);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   INPUT FIELDS
+   ═══════════════════════════════════════════════════════════ */
+
+.input-field {
+  width: 100%;
+  padding: 0.6875rem 0.875rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-strong);
+  background: var(--surface-raised);
+  color: var(--text);
+  font-size: var(--text-base);
+  font-family: var(--font-sans);
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  -webkit-appearance: none;
+  appearance: none;
+}
+.input-field::placeholder {
+  color: var(--text-3);
+}
+.input-field:focus {
+  border-color: var(--border-focus);
+  box-shadow: 0 0 0 3px var(--brand-dim);
+}
+
+.field-label {
+  display: block;
+  font-size: var(--text-xs);
+  font-weight: 600;
+  color: var(--text-2);
+  letter-spacing: 0.03em;
+  margin-bottom: var(--sp-1);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   SEGMENTED CONTROL / TABS
+   ═══════════════════════════════════════════════════════════ */
+
+.seg-control {
+  display: flex;
+  background: var(--surface);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-md);
+  padding: 3px;
+  gap: 2px;
+}
+
+.seg-option {
+  flex: 1;
+  padding: 0.4375rem 0.875rem;
+  border-radius: calc(var(--radius-md) - 2px);
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--text-2);
+  font-family: var(--font-sans);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  cursor: pointer;
+  text-align: center;
+  white-space: nowrap;
+  transition: background 0.14s ease, color 0.14s ease, border-color 0.14s ease;
+}
+.seg-option:hover:not(.seg-active) {
+  color: var(--text);
+  background: var(--surface-raised);
+}
+.seg-active {
+  background: var(--surface-high);
+  color: var(--text);
+  border-color: var(--border-strong);
+  box-shadow: var(--shadow-xs);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   ROOM CODE DISPLAY
+   ═══════════════════════════════════════════════════════════ */
+
+.room-code-display {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--sp-1);
+}
+.room-code-label {
+  font-size: var(--text-xs);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.10em;
+  color: var(--text-3);
+}
+.room-code-value {
+  font-family: var(--font-mono);
+  font-size: clamp(2rem, 7vw, 3.25rem);
+  font-weight: 800;
+  letter-spacing: 0.18em;
+  color: var(--text);
+  line-height: 1.1;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   DIVIDER
+   ═══════════════════════════════════════════════════════════ */
+
+.ds-divider {
+  width: 100%;
+  height: 1px;
+  background: var(--border);
+  border: none;
+  margin: 0;
+}

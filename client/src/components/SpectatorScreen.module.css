@@ -1,0 +1,218 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 2rem;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* ── Hot seat banner ───────────────────────────────────────── */
+.hotSeatBanner {
+  width: 100%;
+  padding: 0.75rem 1.25rem;
+  border-radius: var(--radius-xl, 1rem);
+  background: linear-gradient(135deg, rgba(251, 146, 60, 0.18) 0%, rgba(239, 68, 68, 0.14) 100%);
+  border: 1px solid rgba(251, 146, 60, 0.35);
+  font-size: 0.95rem;
+  color: var(--clr-text-muted);
+  text-align: center;
+}
+
+.hotSeatBanner strong {
+  color: var(--clr-text);
+  font-weight: 700;
+}
+
+/* ── Timer ─────────────────────────────────────────────────── */
+.timerBar {
+  width: 100%;
+  height: 6px;
+  border-radius: 999px;
+  background: var(--clr-border-strong);
+  overflow: hidden;
+}
+
+.timerFill {
+  height: 100%;
+  background: var(--clr-primary);
+  border-radius: 999px;
+  transition: width 1s linear, background 0.3s;
+}
+
+.timerLabel {
+  font-size: 0.9rem;
+  font-weight: 600;
+  opacity: 0.7;
+  align-self: flex-end;
+  margin-top: -1rem;
+  transition: color 0.3s;
+}
+
+.timerWarning.timerFill {
+  background: var(--clr-danger);
+}
+
+.timerWarning.timerLabel {
+  color: var(--clr-danger);
+  opacity: 1;
+}
+
+/* ── Question text ─────────────────────────────────────────── */
+.questionText {
+  font-size: 1.35rem;
+  font-weight: 600;
+  text-align: center;
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* ── Options (read-only) ───────────────────────────────────── */
+.options {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+}
+
+.option {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.85rem 1rem;
+  border-radius: 0.6rem;
+  border: 1px solid var(--clr-border-strong);
+  background: var(--clr-surface);
+  font-size: 0.95rem;
+  font-weight: 500;
+  overflow: hidden;
+}
+
+/* Vote fill — grows from the left as answers come in */
+.option::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  width: var(--vote-pct, 0%);
+  background: var(--clr-primary-dim);
+  border-radius: inherit;
+  transition: width 0.3s ease;
+  pointer-events: none;
+}
+
+.optionBadge {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.6rem;
+  height: 1.6rem;
+  border-radius: 50%;
+  background: var(--clr-border-strong);
+  font-size: 0.75rem;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.optionText {
+  position: relative;
+  flex: 1;
+}
+
+.voteCount {
+  position: relative;
+  margin-left: auto;
+  font-size: 0.8rem;
+  font-weight: 700;
+  opacity: 0.75;
+  background: var(--clr-border));
+  border-radius: 0.3rem;
+  padding: 0.1rem 0.45rem;
+}
+
+/* ── Answered progress ─────────────────────────────────────── */
+.progressBar {
+  width: 100%;
+  height: 8px;
+  border-radius: 999px;
+  background: var(--clr-border));
+  overflow: hidden;
+}
+
+.progressFill {
+  height: 100%;
+  background: var(--clr-primary);
+  border-radius: 999px;
+  transition: width 0.3s ease;
+}
+
+.progressLabel {
+  font-size: 0.85rem;
+  font-weight: 600;
+  opacity: 0.65;
+  margin: -0.75rem 0 0;
+}
+
+/* ── Quick-play host answer interaction ────────────────────── */
+.optionInteractive {
+  cursor: pointer;
+  transition: border-color 0.15s, opacity 0.15s;
+}
+
+.optionInteractive:hover {
+  border-color: var(--clr-primary-border);
+}
+
+.optionSelected {
+  border-color: var(--clr-primary);
+  background: var(--clr-primary-dim);
+}
+
+.optionSelected .optionBadge {
+  background: var(--clr-primary);
+}
+
+.optionDimmed {
+  opacity: 0.3;
+}
+
+.hostAnswerLabel {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--clr-accent);
+  margin: -0.5rem 0 0;
+  text-align: center;
+}
+
+/* ── Voter name chips ──────────────────────────────────────── */
+.voterChips {
+  position: absolute;
+  bottom: 0.35rem;
+  right: 0.5rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.2rem;
+  justify-content: flex-end;
+  max-width: 70%;
+}
+
+.voterChip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.45rem;
+  height: 1.45rem;
+  border-radius: 50%;
+  background: var(--clr-primary-dim);
+  border: 1px solid var(--clr-primary-border);
+  color: var(--clr-accent);
+  font-size: 0.62rem;
+  font-weight: 700;
+  line-height: 1;
+  flex-shrink: 0;
+}

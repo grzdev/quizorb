@@ -1,0 +1,109 @@
+/* ── Status (error / loading) ──────────────────────────────── */
+.statusMsg {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--sp-8) var(--sp-4);
+  color: var(--clr-text-muted);
+  font-size: 0.95rem;
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Finished screen ───────────────────────────────────────── */
+.finishedContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 2rem;
+  animation: fadeInUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.finishedHeading {
+  font-size: 2rem;
+  font-weight: 700;
+  margin: 0;
+  animation: fadeInUp 0.35s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: 60ms;
+  animation-fill-mode: both;
+}
+
+.actions {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.playAgainButton {
+  padding: 0.85rem 2rem;
+  border-radius: var(--radius-md);
+  border: none;
+  background: var(--clr-primary);
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 600;
+  font-family: var(--font-sans);
+  cursor: pointer;
+  box-shadow: 0 2px 12px rgba(109, 94, 245, 0.3);
+  transition: background 0.18s ease, box-shadow 0.18s ease, transform 0.12s ease;
+}
+
+.playAgainButton:hover {
+  background: var(--clr-primary-hover);
+  box-shadow: 0 4px 20px rgba(109, 94, 245, 0.45);
+}
+
+.playAgainButton:active {
+  transform: scale(0.97);
+}
+
+.createNewButton {
+  padding: 0.85rem 2rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--clr-border-strong);
+  background: transparent;
+  color: var(--clr-text);
+  font-size: 1rem;
+  font-weight: 600;
+  font-family: var(--font-sans);
+  cursor: pointer;
+  transition: background 0.18s ease, border-color 0.18s ease, transform 0.12s ease;
+}
+
+.createNewButton:hover {
+  background: var(--clr-surface-raised);
+  border-color: rgba(255, 255, 255, 0.28);
+}
+
+.createNewButton:active {
+  transform: scale(0.97);
+}
+
+.homeButton {
+  padding: 0.85rem 2rem;
+  border-radius: var(--radius-md);
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--clr-text-muted);
+  font-size: 1rem;
+  font-weight: 600;
+  font-family: var(--font-sans);
+  cursor: pointer;
+  transition: color 0.18s ease, border-color 0.18s ease, transform 0.12s ease;
+}
+
+.homeButton:hover {
+  color: var(--clr-text);
+  border-color: var(--clr-border-strong);
+}
+
+.homeButton:active {
+  transform: scale(0.97);
+}
+

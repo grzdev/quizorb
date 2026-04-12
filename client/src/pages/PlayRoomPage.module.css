@@ -1,0 +1,57 @@
+/* ── Status (error / loading) ──────────────────────────────── */
+.statusMsg {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--sp-8) var(--sp-4);
+  color: var(--clr-text-muted);
+  font-size: 0.95rem;
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Finished screen ───────────────────────────────────────── */
+.finishedContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--sp-5);
+  padding: var(--sp-8) var(--sp-4);
+  width: 100%;
+  animation: fadeInUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.finishedHeading {
+  font-size: 2rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin: 0;
+  text-align: center;
+}
+
+/* ── Home button ───────────────────────────────────────────── */
+.homeButton {
+  padding: 0.85rem 2rem;
+  border-radius: var(--radius-md);
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--clr-text-muted);
+  font-size: 1rem;
+  font-weight: 600;
+  font-family: var(--font-sans);
+  cursor: pointer;
+  transition: color 0.18s ease, border-color 0.18s ease, transform 0.12s ease;
+}
+
+.homeButton:hover {
+  color: var(--clr-text);
+  border-color: var(--clr-border-strong);
+}
+
+.homeButton:active {
+  transform: scale(0.97);
+}

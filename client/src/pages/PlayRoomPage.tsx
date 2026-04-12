@@ -40,6 +40,15 @@ export default function PlayRoomPage() {
 
   // Socket event listeners for game progression
   useEffect(() => {
+    function onRoomUpdated(updated: Room) {
+      setRoom(updated)
+      setPlayers(updated.players)
+      if (updated.status === 'lobby') {
+        setScreen('lobby')
+        setQuestion(null)
+      }
+    }
+
     function onQuestionStarted(q: QuestionPayload) {
       setQuestion(q)
       setScreen('question')
@@ -55,11 +64,13 @@ export default function PlayRoomPage() {
       setScreen('finished')
     }
 
+    socket.on('room:updated', onRoomUpdated)
     socket.on('question:started', onQuestionStarted)
     socket.on('leaderboard:updated', onLeaderboardUpdated)
     socket.on('game:finished', onGameFinished)
 
     return () => {
+      socket.off('room:updated', onRoomUpdated)
       socket.off('question:started', onQuestionStarted)
       socket.off('leaderboard:updated', onLeaderboardUpdated)
       socket.off('game:finished', onGameFinished)

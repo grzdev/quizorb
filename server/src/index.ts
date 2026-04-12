@@ -18,7 +18,7 @@ import {
   SOCIAL_PACK_IDS,
   type SocialPackId,
 } from "./socialPacks.js";
-import { createRoom, getRoom, type HostMode, type RoomMode, type SocialModeType } from "./rooms.js";
+import { createRoom, getRoom, type HostMode, type RoomMode, type SocialModeType, type QuizSource } from "./rooms.js";
 import { extractText } from "./services/extractText.js";
 import { generateGroqQuiz, generateGroqQuizFromText } from "./services/groqQuiz.js";
 import type { Question } from "./rooms.js";
@@ -204,7 +204,16 @@ app.get("/api/packs/:pack", (req, res) => {
 
 // POST /api/rooms/create
 app.post("/api/rooms/create", (req, res) => {
-  const { questions, mode, hostMode, socialModeType, hostAnswers } = req.body as { title: string; topic: string; questions: Question[]; mode?: RoomMode; hostMode?: HostMode; socialModeType?: SocialModeType; hostAnswers?: Record<string, number> };
+  const { questions, mode, hostMode, socialModeType, hostAnswers, quizSource } = req.body as {
+    title: string;
+    topic: string;
+    questions: Question[];
+    mode?: RoomMode;
+    hostMode?: HostMode;
+    socialModeType?: SocialModeType;
+    hostAnswers?: Record<string, number>;
+    quizSource?: QuizSource;
+  };
 
   if (!questions || !Array.isArray(questions) || questions.length === 0) {
     res.status(400).json({ error: "questions array is required" });
@@ -216,7 +225,7 @@ app.post("/api/rooms/create", (req, res) => {
     return;
   }
 
-  const room = createRoom(questions, mode ?? "trivia", hostMode ?? "player", socialModeType, hostAnswers);
+  const room = createRoom(questions, mode ?? "trivia", hostMode ?? "player", socialModeType, hostAnswers, quizSource);
   res.json({ roomCode: room.roomCode });
 });
 
@@ -227,8 +236,8 @@ app.get("/api/rooms/:roomCode", (req, res) => {
     res.status(404).json({ error: "Room not found" });
     return;
   }
-  // Strip quiz (delivered question-by-question via socket) before sending to clients
-  const { quiz: _quiz, ...safeRoom } = room;
+  // Strip quiz (delivered question-by-question via socket) and server-only fields before sending to clients
+  const { quiz: _quiz, usedQuestionTexts: _used, ...safeRoom } = room;
   res.json(safeRoom);
 });
 

@@ -158,10 +158,10 @@ const dataset: (Question & { pack: SocialPackId })[] = [
  * Returns up to `count` shuffled questions from the given pack.
  * If count is omitted or exceeds the pool size, returns the full shuffled pool.
  */
-export function getPackQuestions(pack: SocialPackId, count?: number): Question[] {
+export function getPackQuestions(pack: SocialPackId, count?: number, exclude?: Set<string>): Question[] {
   const raw = dataset.filter((q) => q.pack === pack);
 
-  // Deduplicate by prompt text so the same question never appears twice
+  // Deduplicate by prompt text so the same question never appears twice in one game
   const seen = new Set<string>();
   const pool = raw.filter((q) => {
     if (seen.has(q.text)) return false;
@@ -169,7 +169,15 @@ export function getPackQuestions(pack: SocialPackId, count?: number): Question[]
     return true;
   });
 
-  const shuffled = shuffle([...pool]);
+  // Prefer questions not seen in previous rounds; fall back to used ones if needed
+  const normalise = (t: string) => t.toLowerCase().trim();
+  const preferred = exclude ? pool.filter((q) => !exclude.has(normalise(q.text))) : pool;
+  const fallback  = exclude ? pool.filter((q) =>  exclude.has(normalise(q.text))) : [];
+  const combined  = (count === undefined || preferred.length >= count)
+    ? preferred
+    : [...preferred, ...fallback];
+
+  const shuffled = shuffle([...combined]);
   // If count exceeds the unique pool, return all available unique questions
   const selected = count !== undefined ? shuffled.slice(0, count) : shuffled;
   // Shuffle options so the correct answer position varies per question

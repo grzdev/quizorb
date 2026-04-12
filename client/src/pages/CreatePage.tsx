@@ -215,6 +215,18 @@ export default function CreatePage() {
     if (!activeQuestions) return
     setCreatingRoom(true); setError(null)
     try {
+      // Compute quiz source metadata so the server can regenerate fresh questions on Play Again
+      const quizSource: { type: string; topic?: string; packId?: string; count: number } =
+        mode === 'trivia' && topicSource === 'default'
+          ? { type: 'default-topic', topic, count: triviaCount }
+          : mode === 'trivia' && topicSource === 'ai'
+            ? { type: 'groq-topic', topic: aiTopic.trim(), count: triviaCount }
+            : mode === 'trivia' && topicSource === 'file'
+              ? { type: 'file', count: triviaCount }
+              : SOCIAL_MODES.includes(mode)
+                ? { type: 'social-pack', packId: SOCIAL_PACK_ID[mode] ?? 'wkmb', count: socialCount }
+                : { type: 'custom', count: activeQuestions.length }
+
       const res = await fetch(`${API_BASE}/api/rooms/create`, {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -222,6 +234,7 @@ export default function CreatePage() {
           questions: activeQuestions,
           mode: ROOM_MODE[mode],
           hostMode,
+          quizSource,
           ...(SOCIAL_MODES_WITH_SETUP.includes(mode) && { socialModeType }),
           ...(SOCIAL_MODES_WITH_SETUP.includes(mode) && socialModeType === 'set-answers-first' && { hostAnswers }),
         }),

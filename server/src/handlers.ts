@@ -5,10 +5,14 @@ import {
   getRoom,
   joinRoom,
   leaveRoom,
+  markPlayerDisconnected,
   type Question,
   type Room,
 } from "./rooms.js";
 import { calculateScore } from "./scoring.js";
+import { generateQuiz, type Topic } from "./quiz.js";
+import { getPackQuestions, type SocialPackId } from "./socialPacks.js";
+import { generateGroqQuiz } from "./services/groqQuiz.js";
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -124,7 +128,7 @@ export function registerHandlers(io: Server, socket: Socket): void {
         io.to(roomCode).emit("answers:progress", {
           questionId,
           answered: answered.size,
-          total: room!.players.length,
+          total: room!.players.filter((p) => p.connected).length,
           optionCounts,
           optionVoters,
         });
@@ -132,7 +136,7 @@ export function registerHandlers(io: Server, socket: Socket): void {
 
       // ── Hot Seat mode ────────────────────────────────────────────────────────
       if (room.mode === "hotseat") {
-        const nonTargetPlayers = room.players.filter((p) => p.id !== room.targetPlayerId);
+        const nonTargetPlayers = room.players.filter((p) => p.id !== room.targetPlayerId && p.connected);
 
         // Target player submitting — their answer becomes the truth
         if (socket.id === room.targetPlayerId) {
@@ -210,7 +214,7 @@ export function registerHandlers(io: Server, socket: Socket): void {
         const answered = answeredMap.get(key) ?? new Map<string, number>();
         emitProgress(answered);
 
-        const allPlayersAnswered = room.players.every((p) => answered.has(p.id));
+        const allPlayersAnswered = room.players.filter((p) => p.connected).every((p) => answered.has(p.id));
         if (allPlayersAnswered) {
           clearQuestionTimer(roomCode);
           liveHostAnswerMap.delete(key);
@@ -241,7 +245,7 @@ export function registerHandlers(io: Server, socket: Socket): void {
 
         emitProgress(answered);
 
-        const allPlayersAnswered = room.players.every((p) => answered.has(p.id));
+        const allPlayersAnswered = room.players.filter((p) => p.connected).every((p) => answered.has(p.id));
         if (allPlayersAnswered && liveHostAnswerMap.has(key)) {
           clearQuestionTimer(roomCode);
           liveHostAnswerMap.delete(key);
@@ -269,7 +273,7 @@ export function registerHandlers(io: Server, socket: Socket): void {
 
       emitProgress(answered);
 
-      const allAnswered = room.players.every((p) => answered.has(p.id));
+      const allAnswered = room.players.filter((p) => p.connected).every((p) => answered.has(p.id));
       if (!allAnswered) return;
 
       clearQuestionTimer(roomCode);
@@ -280,16 +284,48 @@ export function registerHandlers(io: Server, socket: Socket): void {
 
   // ── room:reset ────────────────────────────────────────────────────────────
   socket.on("room:reset", (payload: { roomCode: string }) => {
-    const room = getRoom(payload.roomCode);
-    if (!room) return;
+    void (async () => {
+      const room = getRoom(payload.roomCode);
+      if (!room) return;
 
-    clearQuestionTimer(room.roomCode);
-    room.status = "lobby";
-    room.currentQuestionIndex = 0;
-    room.players.forEach((p) => {
-      p.score = 0;
-    });
-    broadcastRoom(io, room);
+      clearQuestionTimer(room.roomCode);
+
+      // Archive the current round's questions so next round avoids them
+      const normalise = (t: string) => t.toLowerCase().trim();
+      for (const q of room.quiz) {
+        room.usedQuestionTexts.add(normalise(q.text));
+      }
+
+      // Attempt fresh quiz generation for replayable sources
+      if (room.quizSource) {
+        const { type, topic, packId, count } = room.quizSource;
+        try {
+          let fresh: Question[] | null = null;
+          if (type === "default-topic" && topic) {
+            fresh = generateQuiz(topic as Topic, count, room.usedQuestionTexts);
+          } else if (type === "social-pack" && packId) {
+            fresh = getPackQuestions(packId as SocialPackId, count, room.usedQuestionTexts);
+          } else if (type === "groq-topic" && topic) {
+            // Groq regeneration is inherently varied — LLM avoids repeats naturally
+            fresh = await generateGroqQuiz(topic, count);
+          }
+          if (fresh && fresh.length > 0) {
+            room.quiz = fresh;
+          }
+        } catch (err) {
+          console.error("[room:reset] quiz regeneration failed, keeping existing quiz:", (err as Error).message);
+        }
+      }
+
+      room.status = "lobby";
+      room.currentQuestionIndex = 0;
+      // Remove disconnected players so the new game only waits on active players
+      room.players = room.players.filter((p) => p.connected);
+      room.players.forEach((p) => {
+        p.score = 0;
+      });
+      broadcastRoom(io, room);
+    })();
   });
 
   // ── disconnect ────────────────────────────────────────────────────────────
@@ -298,7 +334,7 @@ export function registerHandlers(io: Server, socket: Socket): void {
     if (!room) return;
 
     const { roomCode } = room;
-    const updatedRoom = leaveRoom(roomCode, socket.id);
+    const updatedRoom = markPlayerDisconnected(roomCode, socket.id);
 
     if (updatedRoom) {
       broadcastRoom(io, updatedRoom);

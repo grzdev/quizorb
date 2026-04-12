@@ -151,13 +151,30 @@ export default function CreatePage() {
         : TOPIC_OPTIONS.find((o) => o.value === topic)?.label ?? topic
       const topicStr: string = String(topicLabel)
       const count: number = Number(triviaCount)
-      console.log("groq payload", { topic: topicStr, count })
-      const res = await fetch(`${API_BASE}/api/quizzes/groq-generate`, {
+      console.log('groq payload', { topic: String(topicStr), count: Number(count) })
+      const response = await fetch(`${API_BASE}/api/quizzes/groq-generate`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ topic: topicStr, count }),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          topic: String(topicStr),
+          count: Number(count),
+        }),
       })
-      const data = await safeFetch<{ questions: GeneratedQuestion[] }>(res, 'quizzes/groq-generate')
+      if (!response.ok) {
+        const text = await response.text()
+        console.error('[groq-generate] error response:', text)
+        let message: string
+        try {
+          const parsed = JSON.parse(text) as { error?: string; details?: string }
+          message = parsed.details ?? parsed.error ?? `Server error (${response.status})`
+        } catch {
+          message = text || `Server error (${response.status})`
+        }
+        throw new Error(message)
+      }
+      const data = await response.json() as { questions: GeneratedQuestion[] }
       setTriviaQuestions(data.questions)
     } catch (err) { setError((err as Error).message) } finally { setTriviaLoading(false) }
   }

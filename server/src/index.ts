@@ -52,6 +52,7 @@ const app = express();
 
 app.use(cors({ origin: ALLOWED_ORIGINS }));
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 // POST /api/quizzes/generate
 app.post("/api/quizzes/generate", (req, res) => {
@@ -74,7 +75,10 @@ app.post("/api/quizzes/generate", (req, res) => {
 // POST /api/quizzes/groq-generate
 app.post("/api/quizzes/groq-generate", async (req, res) => {
   console.log("[quizzes/groq-generate] route hit");
-  console.log(`[quizzes/groq-generate] content-type: ${req.headers["content-type"]}`);
+  console.log("[quizzes/groq-generate] method:", req.method);
+  console.log("[quizzes/groq-generate] content-type:", req.headers["content-type"]);
+  console.log("[quizzes/groq-generate] content-length:", req.headers["content-length"]);
+  console.log("[quizzes/groq-generate] body:", req.body);
   console.log(`[quizzes/groq-generate] GROQ_API_KEY exists: ${!!process.env.GROQ_API_KEY}`);
 
   const body: unknown = req.body;

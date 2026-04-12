@@ -55,7 +55,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // POST /api/quizzes/generate
-app.post("/api/quizzes/generate", (req, res) => {
+app.post("/api/quizzes/generate", express.json(), (req, res) => {
   const { topic, count } = req.body as { topic: Topic; count: number };
 
   if (!topic || !count) {
@@ -73,13 +73,13 @@ app.post("/api/quizzes/generate", (req, res) => {
 });
 
 // POST /api/quizzes/groq-generate
-app.post("/api/quizzes/groq-generate", async (req, res) => {
+app.post("/api/quizzes/groq-generate", express.json(), async (req, res) => {
   console.log("[quizzes/groq-generate] route hit");
-  console.log("[quizzes/groq-generate] method:", req.method);
-  console.log("[quizzes/groq-generate] content-type:", req.headers["content-type"]);
-  console.log("[quizzes/groq-generate] content-length:", req.headers["content-length"]);
-  console.log("[quizzes/groq-generate] body:", req.body);
+  console.log(`[quizzes/groq-generate] method: ${req.method}`);
+  console.log(`[quizzes/groq-generate] content-type: ${req.headers["content-type"]}`);
+  console.log(`[quizzes/groq-generate] content-length: ${req.headers["content-length"]}`);
   console.log(`[quizzes/groq-generate] GROQ_API_KEY exists: ${!!process.env.GROQ_API_KEY}`);
+  console.log("[quizzes/groq-generate] body:", req.body);
 
   const body: unknown = req.body;
   if (body === null || body === undefined || typeof body !== "object" || Array.isArray(body)) {
@@ -209,7 +209,7 @@ app.get("/api/packs/:pack", (req, res) => {
 });
 
 // POST /api/rooms/create
-app.post("/api/rooms/create", (req, res) => {
+app.post("/api/rooms/create", express.json(), (req, res) => {
   const { questions, mode, hostMode, socialModeType, hostAnswers, quizSource } = req.body as {
     title: string;
     topic: string;

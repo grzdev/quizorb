@@ -4,6 +4,7 @@ import HotSeatScreen from '../components/HotSeatScreen.tsx'
 import Leaderboard from '../components/Leaderboard.tsx'
 import Lobby from '../components/Lobby.tsx'
 import QuestionScreen from '../components/QuestionScreen.tsx'
+import { API_BASE } from '../config.ts'
 import { useSocket } from '../hooks/useSocket.ts'
 import type { Player, QuestionPayload, Room } from '../types.ts'
 import styles from './PlayRoomPage.module.css'
@@ -25,7 +26,7 @@ export default function PlayRoomPage() {
   useEffect(() => {
     if (!roomCode) return
 
-    fetch(`http://localhost:4000/api/rooms/${roomCode}`)
+    fetch(`${API_BASE}/api/rooms/${roomCode}`)
       .then((res) => {
         if (!res.ok) throw new Error('Room not found')
         return res.json() as Promise<Room>

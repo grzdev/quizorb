@@ -1,7 +1,8 @@
 import { useEffect, useRef } from "react";
 import { io, type Socket } from "socket.io-client";
+import { API_BASE } from "../config";
 
-const SERVER_URL = "http://localhost:4000";
+const SERVER_URL = API_BASE;
 
 // Module-level singleton — shared across all hook consumers.
 let socket: Socket | null = null;

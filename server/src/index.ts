@@ -42,12 +42,15 @@ const upload = multer({
   },
 });
 
-const PORT = 4000;
-const CLIENT_ORIGIN = "http://localhost:5173";
+const PORT = Number(process.env.PORT) || 4000;
+const ALLOWED_ORIGINS = [
+  "http://localhost:5173",
+  "https://quizorb.netlify.app",
+];
 
 const app = express();
 
-app.use(cors({ origin: CLIENT_ORIGIN }));
+app.use(cors({ origin: ALLOWED_ORIGINS }));
 app.use(express.json());
 
 // POST /api/quizzes/generate
@@ -212,7 +215,7 @@ const httpServer = createServer(app);
 
 const io = new Server(httpServer, {
   cors: {
-    origin: CLIENT_ORIGIN,
+    origin: ALLOWED_ORIGINS,
   },
 });
 
@@ -226,5 +229,5 @@ io.on("connection", (socket) => {
 });
 
 httpServer.listen(PORT, () => {
-  console.log(`Server listening on http://localhost:${PORT}`);
+  console.log(`Server listening on port ${PORT}`);
 });

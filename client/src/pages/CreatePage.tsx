@@ -1,5 +1,6 @@
 ﻿import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { API_BASE } from '../config.ts'
 import type { GeneratedQuestion, HostMode, RoomMode, SocialModeType, SocialPackId, Topic } from '../types.ts'
 import styles from './CreatePage.module.css'
 
@@ -130,7 +131,7 @@ export default function CreatePage() {
       const topicLabel = topicSource === 'ai'
         ? aiTopic.trim()
         : TOPIC_OPTIONS.find((o) => o.value === topic)?.label ?? topic
-      const res = await fetch('http://localhost:4000/api/quizzes/groq-generate', {
+      const res = await fetch(`${API_BASE}/api/quizzes/groq-generate`, {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ topic: topicLabel, count: triviaCount }),
       })
@@ -147,7 +148,7 @@ export default function CreatePage() {
       const formData = new FormData()
       formData.append('file', uploadedFile)
       formData.append('count', String(triviaCount))
-      const res = await fetch('http://localhost:4000/api/quizzes/from-file', { method: 'POST', body: formData })
+      const res = await fetch(`${API_BASE}/api/quizzes/from-file`, { method: 'POST', body: formData })
       const data = await res.json() as { questions?: GeneratedQuestion[]; error?: string }
       if (!res.ok) throw new Error(data.error ?? 'Server error')
       if (!data.questions || data.questions.length === 0) throw new Error('No valid questions could be generated from this file. Try a different file or add more content.')
@@ -162,7 +163,7 @@ export default function CreatePage() {
     const packId = SOCIAL_PACK_ID[mode]; if (!packId) return
     setSocialLoading(true); setSocialQuestions(null); setError(null); setRoomCode(null); setRevealAnswers(false); setHostAnswers({})
     try {
-      const res = await fetch(`http://localhost:4000/api/packs/${packId}?count=${socialCount}`)
+      const res = await fetch(`${API_BASE}/api/packs/${packId}?count=${socialCount}`)
       if (!res.ok) throw new Error('Could not load questions')
       const data = await res.json() as { questions: GeneratedQuestion[] }
       setSocialQuestions(data.questions)
@@ -194,7 +195,7 @@ export default function CreatePage() {
     if (!activeQuestions) return
     setCreatingRoom(true); setError(null)
     try {
-      const res = await fetch('http://localhost:4000/api/rooms/create', {
+      const res = await fetch(`${API_BASE}/api/rooms/create`, {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           title,

@@ -4,6 +4,24 @@ import { API_BASE } from '../config.ts'
 import type { GeneratedQuestion, HostMode, RoomMode, SocialModeType, SocialPackId, Topic } from '../types.ts'
 import styles from './CreatePage.module.css'
 
+/** Safely reads a fetch Response as JSON. Throws a readable error if the
+ *  response is not ok, preventing crashes when the server returns HTML. */
+async function safeFetch<T>(res: Response, route: string): Promise<T> {
+  if (!res.ok) {
+    const text = await res.text()
+    console.error(`[${route}] error response (${res.status}):`, text)
+    let message: string
+    try {
+      const parsed = JSON.parse(text) as { error?: string; details?: string }
+      message = parsed.details ?? parsed.error ?? `Server error (${res.status})`
+    } catch {
+      message = `Server error (${res.status})`
+    }
+    throw new Error(message)
+  }
+  return res.json() as Promise<T>
+}
+
 // ── Constants ────────────────────────────────────────────────────────────────
 
 const TOPIC_OPTIONS: { value: Topic; label: string; emoji: string }[] = [
@@ -135,8 +153,7 @@ export default function CreatePage() {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ topic: topicLabel, count: triviaCount }),
       })
-      if (!res.ok) { const d = await res.json() as { error: string }; throw new Error(d.error ?? 'Server error') }
-      const data = await res.json() as { questions: GeneratedQuestion[] }
+      const data = await safeFetch<{ questions: GeneratedQuestion[] }>(res, 'quizzes/groq-generate')
       setTriviaQuestions(data.questions)
     } catch (err) { setError((err as Error).message) } finally { setTriviaLoading(false) }
   }
@@ -149,8 +166,7 @@ export default function CreatePage() {
       formData.append('file', uploadedFile)
       formData.append('count', String(triviaCount))
       const res = await fetch(`${API_BASE}/api/quizzes/from-file`, { method: 'POST', body: formData })
-      const data = await res.json() as { questions?: GeneratedQuestion[]; error?: string }
-      if (!res.ok) throw new Error(data.error ?? 'Server error')
+      const data = await safeFetch<{ questions?: GeneratedQuestion[] }>(res, 'quizzes/from-file')
       if (!data.questions || data.questions.length === 0) throw new Error('No valid questions could be generated from this file. Try a different file or add more content.')
       setTriviaQuestions(data.questions)
     } catch (err) {
@@ -206,8 +222,7 @@ export default function CreatePage() {
           ...(SOCIAL_MODES_WITH_SETUP.includes(mode) && socialModeType === 'set-answers-first' && { hostAnswers }),
         }),
       })
-      if (!res.ok) { const d = await res.json() as { error: string }; throw new Error(d.error ?? 'Server error') }
-      const data = await res.json() as { roomCode: string }
+      const data = await safeFetch<{ roomCode: string }>(res, 'rooms/create')
       setRoomCode(data.roomCode)
       setCommittedHostMode(hostMode)
       setCommittedSocialModeType(SOCIAL_MODES_WITH_SETUP.includes(mode) ? socialModeType : null)

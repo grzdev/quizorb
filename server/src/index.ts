@@ -66,7 +66,8 @@ app.post("/api/quizzes/generate", (req, res) => {
     const questions = generateQuiz(topic, Number(count));
     res.json({ questions });
   } catch (err) {
-    res.status(400).json({ error: (err as Error).message });
+    console.error("[quizzes/generate] error:", err);
+    res.status(400).json({ error: "Failed to generate quiz", details: (err as Error).message });
   }
 });
 
@@ -89,8 +90,8 @@ app.post("/api/quizzes/groq-generate", async (req, res) => {
     }
     res.json({ questions });
   } catch (err) {
-    console.error("Groq error:", err);
-    res.status(500).json({ error: "Failed to generate questions. Please try again." });
+    console.error("[quizzes/groq-generate] error:", err);
+    res.status(500).json({ error: "Failed to generate quiz", details: (err as Error).message });
   }
 });
 
@@ -131,7 +132,7 @@ app.post("/api/quizzes/from-file", (req, res, next) => {
     console.log(`[from-file] extracted ${text.length} chars`);
   } catch (err) {
     console.error("[from-file] extraction error:", err);
-    res.status(422).json({ error: `Could not read the file: ${(err as Error).message}` });
+    res.status(422).json({ error: "Failed to generate quiz", details: `Could not read the file: ${(err as Error).message}` });
     return;
   }
 
@@ -147,7 +148,7 @@ app.post("/api/quizzes/from-file", (req, res, next) => {
     console.log(`[from-file] Groq returned ${questions.length} valid questions`);
   } catch (err) {
     console.error("[from-file] Groq error:", err);
-    res.status(502).json({ error: "AI generation failed. Please try again." });
+    res.status(502).json({ error: "Failed to generate quiz", details: (err as Error).message });
     return;
   }
 

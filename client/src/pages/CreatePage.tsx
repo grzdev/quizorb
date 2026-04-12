@@ -149,13 +149,13 @@ export default function CreatePage() {
       const topicLabel = topicSource === 'ai'
         ? aiTopic.trim()
         : TOPIC_OPTIONS.find((o) => o.value === topic)?.label ?? topic
-      const topic: string = String(topicLabel)
+      const topicStr: string = String(topicLabel)
       const count: number = Number(triviaCount)
-      console.log("groq request payload", { topic, count })
+      console.log("groq request payload", { topic: topicStr, count })
       const res = await fetch(`${API_BASE}/api/quizzes/groq-generate`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ topic, count }),
+        body: JSON.stringify({ topic: topicStr, count }),
       })
       const data = await safeFetch<{ questions: GeneratedQuestion[] }>(res, 'quizzes/groq-generate')
       setTriviaQuestions(data.questions)

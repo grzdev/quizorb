@@ -88,11 +88,22 @@ Return ONLY valid JSON — no markdown, no explanation, just the array:
   }
 ]`;
 
-  const response = await getGroqClient().chat.completions.create({
-    model: "llama-3.3-70b-versatile",
-    messages: [{ role: "user", content: prompt }],
-    temperature: 0.8,
-  });
+  let response: Awaited<ReturnType<ReturnType<typeof getGroqClient>["chat"]["completions"]["create"]>>;
+  try {
+    response = await getGroqClient().chat.completions.create({
+      model: "llama-3.3-70b-versatile",
+      messages: [{ role: "user", content: prompt }],
+      temperature: 0.8,
+    });
+  } catch (err) {
+    const e = err as Error & { status?: number; response?: { data?: unknown } };
+    console.error("[groqQuiz/generateGroqQuiz] Groq API error:");
+    console.error("  name   :", e.name);
+    console.error("  message:", e.message);
+    if (e.status !== undefined) console.error("  status :", e.status);
+    if (e.response?.data !== undefined) console.error("  response.data:", e.response.data);
+    throw e;
+  }
 
   const raw = response.choices[0]?.message?.content ?? "[]";
   return parseResponse(raw);
@@ -133,11 +144,22 @@ Return ONLY valid JSON — no markdown, no explanation, just the array:
 ${text}
 --- DOCUMENT CONTENT END ---`;
 
-  const response = await getGroqClient().chat.completions.create({
-    model: "llama-3.3-70b-versatile",
-    messages: [{ role: "user", content: prompt }],
-    temperature: 0.5,
-  });
+  let response: Awaited<ReturnType<ReturnType<typeof getGroqClient>["chat"]["completions"]["create"]>>;
+  try {
+    response = await getGroqClient().chat.completions.create({
+      model: "llama-3.3-70b-versatile",
+      messages: [{ role: "user", content: prompt }],
+      temperature: 0.5,
+    });
+  } catch (err) {
+    const e = err as Error & { status?: number; response?: { data?: unknown } };
+    console.error("[groqQuiz/generateGroqQuizFromText] Groq API error:");
+    console.error("  name   :", e.name);
+    console.error("  message:", e.message);
+    if (e.status !== undefined) console.error("  status :", e.status);
+    if (e.response?.data !== undefined) console.error("  response.data:", e.response.data);
+    throw e;
+  }
 
   const raw = response.choices[0]?.message?.content ?? "[]";
   return parseResponse(raw);

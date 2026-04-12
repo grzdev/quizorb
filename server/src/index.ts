@@ -73,14 +73,29 @@ app.post("/api/quizzes/generate", (req, res) => {
 
 // POST /api/quizzes/groq-generate
 app.post("/api/quizzes/groq-generate", async (req, res) => {
-  const { topic, count } = req.body as { topic?: string; count?: number };
+  console.log("[quizzes/groq-generate] route hit");
 
-  if (!topic || typeof topic !== "string" || !topic.trim()) {
-    res.status(400).json({ error: "topic is required" });
+  const body: unknown = req.body;
+  if (body === null || body === undefined || typeof body !== "object" || Array.isArray(body)) {
+    res.status(400).json({ error: "Missing JSON body" });
     return;
   }
 
-  const safeCount = Math.min(Math.max(1, Number(count) || 10), 20);
+  const { topic, count } = body as Record<string, unknown>;
+  console.log(`[quizzes/groq-generate] topic: ${JSON.stringify(topic)} | count: ${JSON.stringify(count)}`);
+  console.log(`[quizzes/groq-generate] GROQ_API_KEY exists: ${!!process.env.GROQ_API_KEY}`);
+
+  if (topic === undefined || topic === null || typeof topic !== "string" || !topic.trim()) {
+    res.status(400).json({ error: "topic is required and must be a non-empty string" });
+    return;
+  }
+
+  if (count === undefined || count === null || typeof count !== "number") {
+    res.status(400).json({ error: "count is required and must be a number" });
+    return;
+  }
+
+  const safeCount = Math.min(Math.max(1, count), 20);
 
   try {
     const questions = await generateGroqQuiz(topic.trim(), safeCount);
@@ -90,8 +105,13 @@ app.post("/api/quizzes/groq-generate", async (req, res) => {
     }
     res.json({ questions });
   } catch (err) {
-    console.error("[quizzes/groq-generate] error:", err);
-    res.status(500).json({ error: "Failed to generate quiz", details: (err as Error).message });
+    const e = err as Error & { status?: number; response?: { data?: unknown } };
+    console.error("[quizzes/groq-generate] Groq call failed:");
+    console.error("  name   :", e.name);
+    console.error("  message:", e.message);
+    if (e.status !== undefined) console.error("  status :", e.status);
+    if (e.response?.data !== undefined) console.error("  response.data:", e.response.data);
+    res.status(500).json({ error: "Failed to generate quiz", details: e.message });
   }
 });
 

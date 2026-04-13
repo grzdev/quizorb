@@ -32,6 +32,8 @@ export type Topic =
   | "pop-culture"
   | "nature";
 
+export type TriviaDifficulty = "easy" | "medium" | "hard";
+
 export interface Player {
   id: string;
   name: string;

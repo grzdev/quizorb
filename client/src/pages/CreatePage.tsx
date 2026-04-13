@@ -1,7 +1,7 @@
 import { useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { API_BASE } from '../config.ts'
-import type { GeneratedQuestion, HostMode, RoomMode, SocialModeType, SocialPackId, Topic } from '../types.ts'
+import type { GeneratedQuestion, HostMode, RoomMode, SocialModeType, SocialPackId, Topic, TriviaDifficulty } from '../types.ts'
 import styles from './CreatePage.module.css'
 
 /** Safely reads a fetch Response as JSON. Throws a readable error if the
@@ -40,6 +40,11 @@ const TOPIC_OPTIONS: { value: Topic; label: string; emoji: string }[] = [
 ]
 
 const COUNT_OPTIONS = [5, 10, 15]
+const DIFFICULTY_OPTIONS: { value: TriviaDifficulty; label: string }[] = [
+  { value: 'easy', label: 'Easy' },
+  { value: 'medium', label: 'Medium' },
+  { value: 'hard', label: 'Hard' },
+]
 const OPTION_LABELS = ['A', 'B', 'C', 'D']
 const DEFAULT_TIME_LIMIT = 20
 
@@ -92,6 +97,7 @@ export default function CreatePage() {
   const [hostMode, setHostMode] = useState<HostMode>('player')
   const [topic, setTopic] = useState<Topic>('science')
   const [triviaCount, setTriviaCount] = useState(10)
+  const [triviaDifficulty, setTriviaDifficulty] = useState<TriviaDifficulty>('medium')
   const [triviaLoading, setTriviaLoading] = useState(false)
   const [triviaQuestions, setTriviaQuestions] = useState<GeneratedQuestion[] | null>(null)
   const [topicSource, setTopicSource] = useState<'default' | 'ai' | 'file'>('default')
@@ -153,7 +159,7 @@ export default function CreatePage() {
         : TOPIC_OPTIONS.find((o) => o.value === topic)?.label ?? topic
       const topicStr: string = String(topicLabel)
       const count: number = Number(triviaCount)
-      console.log('groq payload', { topic: String(topicStr), count: Number(count) })
+      console.log('groq payload', { topic: String(topicStr), count: Number(count), difficulty: triviaDifficulty })
       const response = await fetch(`${API_BASE}/api/quizzes/groq-generate`, {
         method: 'POST',
         headers: {
@@ -162,6 +168,7 @@ export default function CreatePage() {
         body: JSON.stringify({
           topic: String(topicStr),
           count: Number(count),
+          difficulty: triviaDifficulty,
         }),
       })
       if (!response.ok) {
@@ -189,6 +196,7 @@ export default function CreatePage() {
       const formData = new FormData()
       formData.append('file', uploadedFile)
       formData.append('count', String(triviaCount))
+      formData.append('difficulty', triviaDifficulty)
       const res = await fetch(`${API_BASE}/api/quizzes/from-file`, { method: 'POST', body: formData })
       const data = await safeFetch<{ questions?: GeneratedQuestion[] }>(res, 'quizzes/from-file')
       if (!data.questions || data.questions.length === 0) throw new Error('No valid questions could be generated from this file. Try a different file or add more content.')
@@ -238,13 +246,13 @@ export default function CreatePage() {
     setCreatingRoom(true); setError(null)
     try {
       // Compute quiz source metadata so the server can regenerate fresh questions on Play Again
-      const quizSource: { type: string; topic?: string; packId?: string; count: number } =
+      const quizSource: { type: string; topic?: string; difficulty?: TriviaDifficulty; packId?: string; count: number } =
         mode === 'trivia' && topicSource === 'default'
-          ? { type: 'default-topic', topic, count: triviaCount }
+          ? { type: 'default-topic', topic, difficulty: triviaDifficulty, count: triviaCount }
           : mode === 'trivia' && topicSource === 'ai'
-            ? { type: 'groq-topic', topic: aiTopic.trim(), count: triviaCount }
+            ? { type: 'groq-topic', topic: aiTopic.trim(), difficulty: triviaDifficulty, count: triviaCount }
             : mode === 'trivia' && topicSource === 'file'
-              ? { type: 'file', count: triviaCount }
+              ? { type: 'file', difficulty: triviaDifficulty, count: triviaCount }
               : SOCIAL_MODES.includes(mode)
                 ? { type: 'social-pack', packId: SOCIAL_PACK_ID[mode] ?? 'wkmb', count: socialCount }
                 : { type: 'custom', count: activeQuestions.length }
@@ -522,6 +530,20 @@ export default function CreatePage() {
                         className={`${styles.countChip} ${triviaCount === n ? styles.countChipActive : ''}`}
                         onClick={() => setTriviaCount(n)}
                       >{n}</button>
+                    ))}
+                  </div>
+                </div>
+
+                <div className={styles.countRow}>
+                  <span className="field-label" style={{ marginBottom: 0 }}>Difficulty</span>
+                  <div className={styles.countChips}>
+                    {DIFFICULTY_OPTIONS.map((option) => (
+                      <button
+                        key={option.value}
+                        type="button"
+                        className={`${styles.countChip} ${triviaDifficulty === option.value ? styles.countChipActive : ''}`}
+                        onClick={() => { setTriviaDifficulty(option.value); setTriviaQuestions(null); setRoomCode(null) }}
+                      >{option.label}</button>
                     ))}
                   </div>
                 </div>

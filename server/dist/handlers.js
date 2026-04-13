@@ -1,6 +1,5 @@
-import { createRoom, findRoomByPlayer, getRoom, joinRoom, leaveRoom, markPlayerDisconnected, } from "./rooms.js";
+import { findRoomByPlayer, getRoom, joinRoom, markPlayerDisconnected, resetRoomForReplay, } from "./rooms.js";
 import { calculateScore } from "./scoring.js";
-import { generateQuiz } from "./quiz.js";
 import { getPackQuestions } from "./socialPacks.js";
 import { generateGroqQuiz } from "./services/groqQuiz.js";
 // ---------------------------------------------------------------------------
@@ -9,6 +8,23 @@ import { generateGroqQuiz } from "./services/groqQuiz.js";
 /** Broadcast the full room state to every socket in the room. */
 function broadcastRoom(io, room) {
     io.to(room.roomCode).emit("room:updated", room);
+}
+function clearRoomRoundState(roomCode) {
+    clearQuestionTimer(roomCode);
+    questionStartTimes.delete(roomCode);
+    const roomPrefix = `${roomCode}:`;
+    for (const key of answeredMap.keys()) {
+        if (key.startsWith(roomPrefix))
+            answeredMap.delete(key);
+    }
+    for (const key of liveHostAnswerMap.keys()) {
+        if (key.startsWith(roomPrefix))
+            liveHostAnswerMap.delete(key);
+    }
+    for (const key of pendingAnswerMap.keys()) {
+        if (key.startsWith(roomPrefix))
+            pendingAnswerMap.delete(key);
+    }
 }
 /** Strip correctIndex from questions before sending to clients. */
 function sanitizeQuestion(room) {
@@ -236,7 +252,7 @@ export function registerHandlers(io, socket) {
             const room = getRoom(payload.roomCode);
             if (!room)
                 return;
-            clearQuestionTimer(room.roomCode);
+            clearRoomRoundState(room.roomCode);
             // Archive the current round's questions so next round avoids them
             const normalise = (t) => t.toLowerCase().trim();
             for (const q of room.quiz) {
@@ -244,18 +260,18 @@ export function registerHandlers(io, socket) {
             }
             // Attempt fresh quiz generation for replayable sources
             if (room.quizSource) {
-                const { type, topic, packId, count } = room.quizSource;
+                const { type, topic, packId, count, difficulty } = room.quizSource;
                 try {
                     let fresh = null;
                     if (type === "default-topic" && topic) {
-                        fresh = generateQuiz(topic, count, room.usedQuestionTexts);
+                        fresh = await generateGroqQuiz(topic, count, difficulty ?? "medium");
                     }
                     else if (type === "social-pack" && packId) {
                         fresh = getPackQuestions(packId, count, room.usedQuestionTexts);
                     }
                     else if (type === "groq-topic" && topic) {
                         // Groq regeneration is inherently varied — LLM avoids repeats naturally
-                        fresh = await generateGroqQuiz(topic, count);
+                        fresh = await generateGroqQuiz(topic, count, difficulty ?? "medium");
                     }
                     if (fresh && fresh.length > 0) {
                         room.quiz = fresh;
@@ -265,13 +281,7 @@ export function registerHandlers(io, socket) {
                     console.error("[room:reset] quiz regeneration failed, keeping existing quiz:", err.message);
                 }
             }
-            room.status = "lobby";
-            room.currentQuestionIndex = 0;
-            // Remove disconnected players so the new game only waits on active players
-            room.players = room.players.filter((p) => p.connected);
-            room.players.forEach((p) => {
-                p.score = 0;
-            });
+            resetRoomForReplay(room);
             broadcastRoom(io, room);
         })();
     });

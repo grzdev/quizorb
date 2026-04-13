@@ -18,7 +18,7 @@ import {
   SOCIAL_PACK_IDS,
   type SocialPackId,
 } from "./socialPacks.js";
-import { createRoom, getRoom, type HostMode, type RoomMode, type SocialModeType, type QuizSource } from "./rooms.js";
+import { createRoom, getRoom, type HostMode, type RoomMode, type SocialModeType, type QuizSource, type TriviaDifficulty } from "./rooms.js";
 import { extractText } from "./services/extractText.js";
 import { generateGroqQuiz, generateGroqQuizFromText } from "./services/groqQuiz.js";
 import type { Question } from "./rooms.js";
@@ -125,6 +125,10 @@ async function getJsonObjectBody(
   return body as Record<string, unknown>;
 }
 
+function parseTriviaDifficulty(value: unknown): TriviaDifficulty {
+  return value === "easy" || value === "hard" || value === "medium" ? value : "medium";
+}
+
 // POST /api/quizzes/generate
 app.post("/api/quizzes/generate", async (req, res) => {
   const body = await getJsonObjectBody(req, res, "quizzes/generate");
@@ -158,8 +162,8 @@ app.post("/api/quizzes/groq-generate", async (req, res) => {
   const body = await getJsonObjectBody(req, res, "quizzes/groq-generate");
   if (!body) return;
 
-  const { topic, count } = body as Record<string, unknown>;
-  console.log(`[quizzes/groq-generate] topic: ${JSON.stringify(topic)} | count: ${JSON.stringify(count)}`);
+  const { topic, count, difficulty } = body as Record<string, unknown>;
+  console.log(`[quizzes/groq-generate] topic: ${JSON.stringify(topic)} | count: ${JSON.stringify(count)} | difficulty: ${JSON.stringify(difficulty)}`);
 
   if (topic === undefined || topic === null || typeof topic !== "string" || !topic.trim()) {
     res.status(400).json({ error: "topic is required and must be a non-empty string" });
@@ -172,9 +176,10 @@ app.post("/api/quizzes/groq-generate", async (req, res) => {
   }
 
   const safeCount = Math.min(Math.max(1, count), 20);
+  const safeDifficulty = parseTriviaDifficulty(difficulty);
 
   try {
-    const questions = await generateGroqQuiz(topic.trim(), safeCount);
+    const questions = await generateGroqQuiz(topic.trim(), safeCount, safeDifficulty);
     if (questions.length === 0) {
       res.status(502).json({ error: "AI returned no valid questions. Try a different topic." });
       return;
@@ -221,6 +226,7 @@ app.post("/api/quizzes/from-file", (req, res, next) => {
 
   const rawCount = req.body.count;
   const count = rawCount !== undefined ? Math.min(Math.max(1, Number(rawCount) || 10), 20) : 10;
+  const difficulty = parseTriviaDifficulty(req.body.difficulty);
 
   let text: string;
   try {
@@ -240,7 +246,7 @@ app.post("/api/quizzes/from-file", (req, res, next) => {
 
   let questions: Awaited<ReturnType<typeof generateGroqQuizFromText>>;
   try {
-    questions = await generateGroqQuizFromText(text, count);
+    questions = await generateGroqQuizFromText(text, count, difficulty);
     console.log(`[from-file] Groq returned ${questions.length} valid questions`);
   } catch (err) {
     console.error("[from-file] Groq error:", err);

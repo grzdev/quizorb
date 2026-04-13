@@ -1,4 +1,5 @@
 import { getGroqClient } from "../groq.js";
+import type { TriviaDifficulty } from "../rooms.js";
 import { shuffleOptions } from "../utils.js";
 
 export interface GroqQuestion {
@@ -12,22 +13,19 @@ function isValidQuestion(q: unknown): q is GroqQuestion {
   if (!q || typeof q !== "object") return false;
   const obj = q as Record<string, unknown>;
 
-  // Accept either 'text' or 'prompt' as the question field
+  // Accept either "text" or "prompt" as the question field.
   const text = typeof obj.text === "string" ? obj.text : typeof obj.prompt === "string" ? obj.prompt : "";
   if (!text.trim()) return false;
 
-  // Must have exactly 4 non-empty string options
   if (!Array.isArray(obj.options) || obj.options.length !== 4) return false;
   if (obj.options.some((o) => typeof o !== "string" || !o.trim())) return false;
 
-  // correctIndex must be an integer 0–3
   if (!Number.isInteger(obj.correctIndex)) return false;
   if ((obj.correctIndex as number) < 0 || (obj.correctIndex as number) > 3) return false;
 
   return true;
 }
 
-/** Shared post-processing: parse raw LLM output, validate, deduplicate, shuffle. */
 function parseResponse(raw: string): GroqQuestion[] {
   const cleaned = raw.replace(/^```(?:json)?\s*/i, "").replace(/\s*```$/i, "").trim();
 
@@ -65,19 +63,37 @@ function normalise(raw: unknown): GroqQuestion {
   };
 }
 
-export async function generateGroqQuiz(topic: string, count: number): Promise<GroqQuestion[]> {
+function getDifficultyGuidance(difficulty: TriviaDifficulty): string {
+  switch (difficulty) {
+    case "easy":
+      return "Keep questions broad, simple, and highly accessible. Favor well-known facts and avoid niche trivia.";
+    case "hard":
+      return "Make questions more challenging and a bit niche. Favor deeper knowledge, less obvious facts, and stronger distractors.";
+    case "medium":
+    default:
+      return "Keep difficulty balanced. Mix familiar knowledge with moderately challenging facts.";
+  }
+}
+
+export async function generateGroqQuiz(
+  topic: string,
+  count: number,
+  difficulty: TriviaDifficulty = "medium",
+): Promise<GroqQuestion[]> {
   const safeCount = Math.min(Math.max(1, count), 20);
+  const difficultyGuidance = getDifficultyGuidance(difficulty);
 
   const prompt = `Generate ${safeCount} multiple choice quiz questions about "${topic}".
 
 Rules:
 - Each question must be distinct and not repeat.
+- Difficulty: ${difficulty}. ${difficultyGuidance}
 - Each question must have exactly 4 options.
 - options must be concise (under 10 words each).
 - correctIndex is 0-3 (index of the correct option in the options array).
 - timeLimit is always 20.
 
-Return ONLY valid JSON — no markdown, no explanation, just the array:
+Return ONLY valid JSON - no markdown, no explanation, just the array:
 
 [
   {
@@ -109,27 +125,26 @@ Return ONLY valid JSON — no markdown, no explanation, just the array:
   return parseResponse(raw);
 }
 
-/**
- * Generate quiz questions directly from extracted document text.
- * The text is embedded in the prompt so Groq derives questions from its content.
- */
 export async function generateGroqQuizFromText(
   text: string,
   count: number,
+  difficulty: TriviaDifficulty = "medium",
 ): Promise<GroqQuestion[]> {
   const safeCount = Math.min(Math.max(1, count), 20);
+  const difficultyGuidance = getDifficultyGuidance(difficulty);
 
   const prompt = `You are a quiz generator. Read the following document content and generate ${safeCount} multiple choice questions based strictly on the information it contains.
 
 Rules:
-- Each question must be answerable from the content below — do not invent facts.
+- Each question must be answerable from the content below - do not invent facts.
+- Difficulty: ${difficulty}. ${difficultyGuidance}
 - Each question must have exactly 4 options.
 - Options must be concise (under 10 words each).
 - correctIndex is 0-3 (index of the correct option in the options array).
 - timeLimit is always 20.
 - Do not repeat questions.
 
-Return ONLY valid JSON — no markdown, no explanation, just the array:
+Return ONLY valid JSON - no markdown, no explanation, just the array:
 
 [
   {

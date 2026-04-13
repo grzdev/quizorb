@@ -21,12 +21,16 @@ export type HostMode = "player" | "spectate";
 
 export type SocialModeType = "quick-play" | "set-answers-first";
 
+export type TriviaDifficulty = "easy" | "medium" | "hard";
+
 export type QuizSourceType = "default-topic" | "social-pack" | "groq-topic" | "file" | "custom";
 
 export interface QuizSource {
   type: QuizSourceType;
   /** Topic string for default-topic and groq-topic sources */
   topic?: string;
+  /** Difficulty for trivia regeneration sources */
+  difficulty?: TriviaDifficulty;
   /** Pack ID for social-pack sources */
   packId?: string;
   /** Number of questions requested */

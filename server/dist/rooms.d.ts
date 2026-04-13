@@ -15,11 +15,14 @@ export type GameStatus = "lobby" | "question" | "leaderboard" | "finished";
 export type RoomMode = "trivia" | "wkmb" | "hotseat" | "custom";
 export type HostMode = "player" | "spectate";
 export type SocialModeType = "quick-play" | "set-answers-first";
+export type TriviaDifficulty = "easy" | "medium" | "hard";
 export type QuizSourceType = "default-topic" | "social-pack" | "groq-topic" | "file" | "custom";
 export interface QuizSource {
     type: QuizSourceType;
     /** Topic string for default-topic and groq-topic sources */
     topic?: string;
+    /** Difficulty for trivia regeneration sources */
+    difficulty?: TriviaDifficulty;
     /** Pack ID for social-pack sources */
     packId?: string;
     /** Number of questions requested */
@@ -47,8 +50,10 @@ export declare function createRoom(quiz: Question[], mode?: RoomMode, hostMode?:
 export declare function joinRoom(roomCode: string, playerId: string, playerName: string): Room;
 export declare function getRoom(roomCode: string): Room | undefined;
 export declare function leaveRoom(roomCode: string, playerId: string): Room | undefined;
-/** Mark a player as disconnected without removing them from the room. */
-export declare function markPlayerDisconnected(roomCode: string, playerId: string): Room | undefined;
-/** Returns the room code a socket is currently in, if any. */
+/** Reset a room to lobby state so the same room can be replayed safely. */
+export declare function resetRoomForReplay(room: Room): Room;
+/** Mark a connected socket as disconnected without removing the room immediately. */
+export declare function markPlayerDisconnected(roomCode: string, socketId: string): Room | undefined;
+/** Returns the room a socket is currently associated with, if any. */
 export declare function findRoomByPlayer(playerId: string): Room | undefined;
 //# sourceMappingURL=rooms.d.ts.map

@@ -3,7 +3,6 @@ import quizorbLogo from '../assets/quizorbLogo.png'
 import styles from './PageShell.module.css'
 
 const BACK_MAP: Record<string, string> = {
-  '/create': '/',
   '/join':   '/',
 }
 

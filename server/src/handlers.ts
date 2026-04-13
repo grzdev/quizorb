@@ -1,17 +1,14 @@
 import type { Server, Socket } from "socket.io";
 import {
-  createRoom,
   findRoomByPlayer,
   getRoom,
   joinRoom,
-  leaveRoom,
   markPlayerDisconnected,
   resetRoomForReplay,
   type Question,
   type Room,
 } from "./rooms.js";
 import { calculateScore } from "./scoring.js";
-import { generateQuiz, type Topic } from "./quiz.js";
 import { getPackQuestions, type SocialPackId } from "./socialPacks.js";
 import { generateGroqQuiz } from "./services/groqQuiz.js";
 
@@ -315,16 +312,16 @@ export function registerHandlers(io: Server, socket: Socket): void {
 
       // Attempt fresh quiz generation for replayable sources
       if (room.quizSource) {
-        const { type, topic, packId, count } = room.quizSource;
+        const { type, topic, packId, count, difficulty } = room.quizSource;
         try {
           let fresh: Question[] | null = null;
           if (type === "default-topic" && topic) {
-            fresh = generateQuiz(topic as Topic, count, room.usedQuestionTexts);
+            fresh = await generateGroqQuiz(topic, count, difficulty ?? "medium");
           } else if (type === "social-pack" && packId) {
             fresh = getPackQuestions(packId as SocialPackId, count, room.usedQuestionTexts);
           } else if (type === "groq-topic" && topic) {
             // Groq regeneration is inherently varied — LLM avoids repeats naturally
-            fresh = await generateGroqQuiz(topic, count);
+            fresh = await generateGroqQuiz(topic, count, difficulty ?? "medium");
           }
           if (fresh && fresh.length > 0) {
             room.quiz = fresh;

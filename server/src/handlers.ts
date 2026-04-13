@@ -96,6 +96,29 @@ export function registerHandlers(io: Server, socket: Socket): void {
     },
   );
 
+  // ── room:info ─────────────────────────────────────────────────────────────
+  socket.on(
+    "room:info",
+    (
+      payload: { roomCode: string },
+      callback?: (res: { error?: string; info?: any }) => void,
+    ) => {
+      const room = getRoom(payload.roomCode);
+      if (!room) {
+        callback?.({ error: `Room "${payload.roomCode}" not found` });
+        return;
+      }
+      callback?.({
+        info: {
+          mode: room.mode,
+          quizSource: room.quizSource,
+          questionCount: room.quiz.length,
+          socialModeType: room.socialModeType
+        }
+      });
+    },
+  );
+
   // ── game:start ────────────────────────────────────────────────────────────
   socket.on("game:start", (payload: { roomCode: string }) => {
     const room = getRoom(payload.roomCode);

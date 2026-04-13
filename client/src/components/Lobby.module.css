@@ -1,4 +1,4 @@
-﻿@keyframes fadeInUp {
+@keyframes fadeInUp {
   from { opacity: 0; transform: translateY(18px); }
   to   { opacity: 1; transform: translateY(0); }
 }
@@ -291,4 +291,33 @@
   opacity: 0.4;
   cursor: not-allowed;
   box-shadow: none;
+}
+
+/* ── Room Info ──────────────────────────────────────────────── */
+.roomInfo {
+  padding: var(--sp-3) var(--sp-4);
+  background: var(--surface);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-lg);
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-1);
+}
+
+.infoRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: var(--text-sm);
+}
+
+.infoLabel {
+  color: var(--text-3);
+  font-weight: 500;
+}
+
+.infoValue {
+  color: var(--text);
+  font-weight: 600;
+  text-transform: capitalize;
 }

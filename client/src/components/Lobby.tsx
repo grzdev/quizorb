@@ -104,6 +104,31 @@ export default function Lobby({ initialRoom, onGameStart, isHost = false }: Prop
           <div className={styles.modeBadge}>👤 Who Knows Me Best</div>
         )}
 
+        <div className={styles.roomInfo}>
+          <div className={styles.infoRow}>
+            <span className={styles.infoLabel}>Mode:</span>
+            <span className={styles.infoValue}>{room.mode}</span>
+          </div>
+          {room.quizSource?.topic && (
+            <div className={styles.infoRow}>
+              <span className={styles.infoLabel}>Topic:</span>
+              <span className={styles.infoValue}>{room.quizSource.topic}</span>
+            </div>
+          )}
+          {room.quizSource?.type === 'social-pack' && (
+            <div className={styles.infoRow}>
+              <span className={styles.infoLabel}>Pack:</span>
+              <span className={styles.infoValue}>{room.quizSource.packId}</span>
+            </div>
+          )}
+          {room.quizSource && (
+            <div className={styles.infoRow}>
+              <span className={styles.infoLabel}>Questions:</span>
+              <span className={styles.infoValue}>{room.quizSource.count}</span>
+            </div>
+          )}
+        </div>
+
         {/* ── Players ── */}
         <section className={styles.players}>
           <div className={styles.playersHeading}>

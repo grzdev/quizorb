@@ -1,7 +1,7 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { useSocket } from '../hooks/useSocket.ts'
-import type { Room } from '../types.ts'
+import type { Room, RoomInfo } from '../types.ts'
 import { getFriendlyRoomErrorMessage } from '../utils/roomErrors.ts'
 import styles from './JoinPage.module.css'
 
@@ -9,10 +9,26 @@ export default function JoinPage() {
   const socket = useSocket()
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
+  const initialCode = searchParams.get('code') ?? ''
   const [playerName, setPlayerName] = useState('')
-  const [roomCode, setRoomCode] = useState(() => (searchParams.get('code') ?? '').toUpperCase())
+  const [roomCode, setRoomCode] = useState(() => initialCode.toUpperCase())
   const [error, setError] = useState<string | null>(null)
   const [joining, setJoining] = useState(false)
+  const [roomInfo, setRoomInfo] = useState<RoomInfo | null>(null)
+
+  useEffect(() => {
+    if (roomCode.length === 6) {
+      socket.emit('room:info', { roomCode }, (res: { error?: string; info?: RoomInfo }) => {
+        if (res.info) {
+          setRoomInfo(res.info)
+        } else {
+          setRoomInfo(null)
+        }
+      })
+    } else {
+      setRoomInfo(null)
+    }
+  }, [roomCode, socket])
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -59,9 +75,34 @@ export default function JoinPage() {
               onChange={(e) => setRoomCode(e.target.value.toUpperCase())}
               maxLength={6}
               spellCheck={false}
-              autoFocus
+              autoFocus={!initialCode}
             />
           </label>
+
+          {roomInfo && (
+            <div className={styles.roomInfo}>
+              <div className={styles.infoRow}>
+                <span className={styles.infoLabel}>Mode:</span>
+                <span className={styles.infoValue}>{roomInfo.mode}</span>
+              </div>
+              {roomInfo.quizSource?.topic && (
+                <div className={styles.infoRow}>
+                  <span className={styles.infoLabel}>Topic:</span>
+                  <span className={styles.infoValue}>{roomInfo.quizSource.topic}</span>
+                </div>
+              )}
+              {roomInfo.quizSource?.type === 'social-pack' && (
+                <div className={styles.infoRow}>
+                  <span className={styles.infoLabel}>Pack:</span>
+                  <span className={styles.infoValue}>{roomInfo.quizSource.packId}</span>
+                </div>
+              )}
+              <div className={styles.infoRow}>
+                <span className={styles.infoLabel}>Questions:</span>
+                <span className={styles.infoValue}>{roomInfo.questionCount}</span>
+              </div>
+            </div>
+          )}
 
           <label className={styles.field}>
             <span className={styles.label}>Your name</span>
@@ -71,6 +112,7 @@ export default function JoinPage() {
               placeholder="e.g. Alice"
               value={playerName}
               onChange={(e) => setPlayerName(e.target.value)}
+              autoFocus={!!initialCode}
             />
           </label>
 

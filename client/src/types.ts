@@ -65,6 +65,23 @@ export interface PackMeta {
 
 export type HostMode = "player" | "spectate";
 
+export type QuizSourceType = "default-topic" | "social-pack" | "groq-topic" | "file" | "custom";
+
+export interface QuizSource {
+  type: QuizSourceType;
+  topic?: string;
+  difficulty?: TriviaDifficulty;
+  packId?: string;
+  count: number;
+}
+
+export interface RoomInfo {
+  mode: RoomMode;
+  quizSource?: QuizSource;
+  questionCount: number;
+  socialModeType?: SocialModeType;
+}
+
 export interface Room {
   roomCode: string;
   players: Player[];
@@ -74,4 +91,5 @@ export interface Room {
   hostMode: HostMode;
   socialModeType?: SocialModeType;
   targetPlayerId?: string;
+  quizSource?: QuizSource;
 }

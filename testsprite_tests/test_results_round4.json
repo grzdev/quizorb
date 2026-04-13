@@ -1,0 +1,68 @@
+﻿{
+    "run_label":  "round4",
+    "executed_at":  "2026-04-13T20:58:21.3479532+01:00",
+    "app_frontend":  "http://localhost:5173",
+    "app_backend":  "http://localhost:4000",
+    "total":  4,
+    "passed":  3,
+    "failed":  1,
+    "results":  [
+                    {
+                        "test":  "TC001_Host_triggers_Play_Again_and_returns_to_lobby_for_a_new_run",
+                        "file":  "TC001_Host_triggers_Play_Again_and_returns_to_lobby_for_a_new_run.py",
+                        "status":  "failed",
+                        "exit_code":  1,
+                        "duration_seconds":  7.08,
+                        "stdout_log":  "C:\\Users\\raiden\\quizdrop\\testsprite_tests\\execution_artifacts_round4\\TC001_Host_triggers_Play_Again_and_returns_to_lobby_for_a_new_run.stdout.log",
+                        "stderr_log":  "C:\\Users\\raiden\\quizdrop\\testsprite_tests\\execution_artifacts_round4\\TC001_Host_triggers_Play_Again_and_returns_to_lobby_for_a_new_run.stderr.log",
+                        "screenshots":  [
+                                            "C:\\Users\\raiden\\quizdrop\\testsprite_tests\\execution_artifacts_round4\\TC001_Host_triggers_Play_Again_and_returns_to_lobby_for_a_new_run_TC001_failure_page1.png",
+                                            "C:\\Users\\raiden\\quizdrop\\testsprite_tests\\execution_artifacts_round4\\TC001_Host_triggers_Play_Again_and_returns_to_lobby_for_a_new_run_TC001_failure_page2.png"
+                                        ],
+                        "stdout_excerpt":  "",
+                        "stderr_excerpt":  "Traceback (most recent call last):\r\n  File \"C:\\Users\\raiden\\quizdrop\\testsprite_tests\\frontend\\TC001_Host_triggers_Play_Again_and_returns_to_lobby_for_a_new_run.py\", line 31, in \u003cmodule\u003e\r\n    asyncio.run(run_test_case(\"TC001\", exercise, timeout_ms=30000))\r\n  File \"C:\\Users\\raiden\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\asyncio\\runners.py\", line 195, in run\r\n    return runner.run(main)\r\n           ^^^^^^^^^^^^^^^^\r\n  File \"C:\\Users\\raiden\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\asyncio\\runners.py\", line 118, in run\r\n    return self._loop.run_until_complete(task)\r\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\r\n  File \"C:\\Users\\raiden\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\asyncio\\base_events.py\", line 691, in run_until_complete\r\n    return future.result()\r\n           ^^^^^^^^^^^^^^^\r\n  File \"C:\\Users\\raiden\\quizdrop\\testsprite_tests\\frontend\\_testsprite_helpers.py\", line 63, in run_test_case\r\n    await test_body(context)\r\n  File \"C:\\Users\\raiden\\quizdrop\\testsprite_tests\\frontend\\TC001_Host_triggers_Play_Again_and_returns_to_lobby_for_a_new_run.py\", line 22, in exercise\r\n    await complete_single_question_round(host_page, [player_page])\r\n  File \"C:\\Users\\raiden\\quizdrop\\testsprite_tests\\frontend\\_testsprite_helpers.py\", line 229, in complete_single_question_round\r\n    await answer_question(host_page)\r\n  File \"C:\\Users\\raiden\\quizdrop\\testsprite_tests\\frontend\\_testsprite_helpers.py\", line 202, in answer_question\r\n    await expect(option_button).to_be_visible()\r\n  File \"C:\\Users\\raiden\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\site-packages\\playwright\\async_api\\_generated.py\", line 20372, in to_be_visible\r\n    await self._impl_obj.to_be_visible(visible=visible, timeout=timeout)\r\n  File \"C:\\Users\\raiden\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\site-packages\\playwright\\_impl\\_assertions.py\", line 765, in to_be_visible\r\n    await self._expect_impl(\r\n  File \"C:\\Users\\raiden\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\site-packages\\playwright\\_impl\\_assertions.py\", line 85, in _expect_impl\r\n    raise AssertionError(\r\nAssertionError: Locator expected to be visible\r\nActual value: None\r\nError: element(s) not found \r\nCall log:\r\n  - Expect \"to_be_visible\" with timeout 5000ms\r\n  - waiting for get_by_role(\"button\", name=\"4\", exact=True)"
+                    },
+                    {
+                        "test":  "TC009_Join_via_deep_link_with_prefilled_room_code",
+                        "file":  "TC009_Join_via_deep_link_with_prefilled_room_code.py",
+                        "status":  "passed",
+                        "exit_code":  0,
+                        "duration_seconds":  2.02,
+                        "stdout_log":  "C:\\Users\\raiden\\quizdrop\\testsprite_tests\\execution_artifacts_round4\\TC009_Join_via_deep_link_with_prefilled_room_code.stdout.log",
+                        "stderr_log":  "C:\\Users\\raiden\\quizdrop\\testsprite_tests\\execution_artifacts_round4\\TC009_Join_via_deep_link_with_prefilled_room_code.stderr.log",
+                        "screenshots":  [
+
+                                        ],
+                        "stdout_excerpt":  "",
+                        "stderr_excerpt":  ""
+                    },
+                    {
+                        "test":  "TC011_Generate_trivia_set_from_preset_topic_and_reach_review",
+                        "file":  "TC011_Generate_trivia_set_from_preset_topic_and_reach_review.py",
+                        "status":  "passed",
+                        "exit_code":  0,
+                        "duration_seconds":  6.05,
+                        "stdout_log":  "C:\\Users\\raiden\\quizdrop\\testsprite_tests\\execution_artifacts_round4\\TC011_Generate_trivia_set_from_preset_topic_and_reach_review.stdout.log",
+                        "stderr_log":  "C:\\Users\\raiden\\quizdrop\\testsprite_tests\\execution_artifacts_round4\\TC011_Generate_trivia_set_from_preset_topic_and_reach_review.stderr.log",
+                        "screenshots":  [
+
+                                        ],
+                        "stdout_excerpt":  "",
+                        "stderr_excerpt":  ""
+                    },
+                    {
+                        "test":  "TC108_Join_form_validates_empty_inputs_and_invalid_codes",
+                        "file":  "TC108_Join_form_validates_empty_inputs_and_invalid_codes.py",
+                        "status":  "passed",
+                        "exit_code":  0,
+                        "duration_seconds":  2.01,
+                        "stdout_log":  "C:\\Users\\raiden\\quizdrop\\testsprite_tests\\execution_artifacts_round4\\TC108_Join_form_validates_empty_inputs_and_invalid_codes.stdout.log",
+                        "stderr_log":  "C:\\Users\\raiden\\quizdrop\\testsprite_tests\\execution_artifacts_round4\\TC108_Join_form_validates_empty_inputs_and_invalid_codes.stderr.log",
+                        "screenshots":  [
+
+                                        ],
+                        "stdout_excerpt":  "",
+                        "stderr_excerpt":  ""
+                    }
+                ]
+}

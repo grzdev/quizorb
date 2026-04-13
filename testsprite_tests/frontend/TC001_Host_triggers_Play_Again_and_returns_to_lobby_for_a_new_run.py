@@ -1,83 +1,48 @@
+import asyncio
 import re
-from playwright import async_api
-from playwright.async_api import expect
+
+from playwright.async_api import BrowserContext, expect
+
+from _testsprite_helpers import (
+    create_host_lobby,
+    join_room,
+    run_test_case,
+    start_game,
+    wait_for_host_finished,
+    wait_for_host_lobby,
+    wait_for_player_finished,
+    wait_for_player_lobby,
+)
 
 
-APP_URL = "http://127.0.0.1:5173"
+async def answer_visible_option(page, option_text: str = "4") -> None:
+    option_button = page.get_by_role(
+        "button",
+        name=re.compile(rf"(?:^|.*\s){re.escape(option_text)}$"),
+    )
+    await expect(option_button).to_be_visible()
+    await expect(option_button).to_be_enabled()
+    await option_button.click()
 
 
-async def run_test():
-    pw = None
-    browser = None
-    context = None
+async def exercise(context: BrowserContext) -> None:
+    host_page = await context.new_page()
+    room_code = await create_host_lobby(host_page, title="Play Again Regression")
 
-    try:
-        pw = await async_api.async_playwright().start()
-        browser = await pw.chromium.launch(
-            headless=True,
-            args=[
-                "--window-size=1280,720",
-                "--disable-dev-shm-usage",
-                "--ipc=host",
-                "--single-process",
-            ],
-        )
+    player_page = await context.new_page()
+    await join_room(player_page, room_code, "ReplayPlayer")
 
-        context = await browser.new_context()
-        context.set_default_timeout(12000)
+    await start_game(host_page)
+    await answer_visible_option(host_page)
+    await answer_visible_option(player_page)
+    await wait_for_host_finished(host_page)
+    await wait_for_player_finished(player_page)
+    await host_page.get_by_role("button", name="Play Again").click()
 
-        page = await context.new_page()
-        await page.goto(APP_URL, wait_until="domcontentloaded")
-
-        # Create a minimal one-question room as a playing host.
-        await page.get_by_role("link", name="Create Game").first.click()
-        await page.get_by_role("button", name=re.compile("Custom")).click()
-
-        await page.get_by_label("Question prompt").fill("2+2?")
-        await page.get_by_label("Option A").fill("4")
-        await page.get_by_label("Option B").fill("3")
-        await page.get_by_label("Option C").fill("5")
-        await page.get_by_label("Option D").fill("6")
-        await page.get_by_role("button", name=re.compile(r"Add Question")).click()
-
-        await page.get_by_label("Quiz title").fill("Play Again Regression")
-        await page.get_by_label("Host name").fill("HostPlayer")
-        await page.get_by_role("button", name="Create Room").click()
-
-        room_code_locator = page.locator(".room-code-value")
-        await expect(room_code_locator).to_be_visible()
-        room_code = (await room_code_locator.text_content() or "").strip().upper()
-        assert re.fullmatch(r"[A-Z2-9]{6}", room_code), f"Expected a generated room code, got {room_code!r}"
-
-        await page.get_by_role("button", name=re.compile(r"Go to lobby")).click()
-        await expect(page).to_have_url(re.compile(rf"{re.escape(APP_URL)}/host/{re.escape(room_code)}$"))
-
-        start_button = page.get_by_role("button", name="Start game")
-        await expect(start_button).to_be_visible()
-        await start_button.click()
-
-        await page.get_by_role("button", name="4").click()
-        await expect(page.locator("body")).to_contain_text("Game Over")
-
-        play_again_button = page.get_by_role("button", name="Play Again")
-        await expect(play_again_button).to_be_visible()
-        await play_again_button.click()
-
-        await expect(page).to_have_url(re.compile(rf"{re.escape(APP_URL)}/host/{re.escape(room_code)}$"))
-        await expect(page.locator("body")).to_contain_text(room_code)
-        await expect(start_button).to_be_visible()
-        await expect(page.locator("body")).not_to_contain_text("Game Over")
-
-    finally:
-        if context:
-            await context.close()
-        if browser:
-            await browser.close()
-        if pw:
-            await pw.stop()
+    await wait_for_host_lobby(host_page, room_code)
+    await wait_for_player_lobby(player_page, room_code)
+    await expect(host_page.locator("body")).not_to_contain_text("Game Over")
 
 
 if __name__ == "__main__":
-    import asyncio
-
-    asyncio.run(run_test())
+    asyncio.run(run_test_case("TC001", exercise, timeout_ms=30000))

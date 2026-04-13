@@ -15,7 +15,6 @@
   align-items: center;
   justify-content: space-between;
   padding: 0 var(--sp-6);
-  border-bottom: 1px solid var(--border);
   background: rgba(11, 11, 16, 0.80);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
@@ -30,7 +29,7 @@
 }
 
 .logoImg {
-  height: 44px;
+  height: 40px;
   width: auto;
   display: block;
   transition: opacity 0.15s ease;

@@ -1,0 +1,33 @@
+Traceback (most recent call last):
+  File "C:\Users\raiden\quizdrop\testsprite_tests\frontend\TC001_Host_triggers_Play_Again_and_returns_to_lobby_for_a_new_run.py", line 31, in <module>
+    asyncio.run(run_test_case("TC001", exercise, timeout_ms=30000))
+  File "C:\Users\raiden\AppData\Local\Programs\Python\Python312\Lib\asyncio\runners.py", line 195, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "C:\Users\raiden\AppData\Local\Programs\Python\Python312\Lib\asyncio\runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\raiden\AppData\Local\Programs\Python\Python312\Lib\asyncio\base_events.py", line 691, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "C:\Users\raiden\quizdrop\testsprite_tests\frontend\_testsprite_helpers.py", line 63, in run_test_case
+    await test_body(context)
+  File "C:\Users\raiden\quizdrop\testsprite_tests\frontend\TC001_Host_triggers_Play_Again_and_returns_to_lobby_for_a_new_run.py", line 22, in exercise
+    await complete_single_question_round(host_page, [player_page])
+  File "C:\Users\raiden\quizdrop\testsprite_tests\frontend\_testsprite_helpers.py", line 229, in complete_single_question_round
+    await answer_question(host_page)
+  File "C:\Users\raiden\quizdrop\testsprite_tests\frontend\_testsprite_helpers.py", line 202, in answer_question
+    await expect(option_button).to_be_visible()
+  File "C:\Users\raiden\AppData\Local\Programs\Python\Python312\Lib\site-packages\playwright\async_api\_generated.py", line 20372, in to_be_visible
+    await self._impl_obj.to_be_visible(visible=visible, timeout=timeout)
+  File "C:\Users\raiden\AppData\Local\Programs\Python\Python312\Lib\site-packages\playwright\_impl\_assertions.py", line 765, in to_be_visible
+    await self._expect_impl(
+  File "C:\Users\raiden\AppData\Local\Programs\Python\Python312\Lib\site-packages\playwright\_impl\_assertions.py", line 85, in _expect_impl
+    raise AssertionError(
+AssertionError: Locator expected to be visible
+Actual value: None
+Error: element(s) not found 
+Call log:
+  - Expect "to_be_visible" with timeout 5000ms
+  - waiting for get_by_role("button", name="4", exact=True)
+

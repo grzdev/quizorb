@@ -1,37 +1,45 @@
 import { Link } from 'react-router-dom'
 import hero2 from '../assets/hero2.png'
+import hero5 from '../assets/hero5.png'
+import hero6 from '../assets/hero6.png'
 import styles from './LandingPage.module.css'
 
-const FEATURES = [
+const SCENARIOS = [
   {
-    icon: '⚡',
-    title: 'Real-time multiplayer',
-    desc: 'Everyone answers at once, and results update live as answers roll in.',
+    icon: '🎉',
+    title: 'Game Night Energy',
+    desc: 'Friends, snacks, loud debates. Perfect chaos.',
+    color: 'var(--brand)',
   },
   {
-    icon: '🤖',
-    title: 'AI-generated quizzes',
-    desc: 'Pick any topic and get 10 polished questions in seconds. Completely free.',
+    icon: '🏖️',
+    title: 'Beach & Hangouts',
+    desc: 'Pass the phone, challenge your crew anywhere.',
+    color: 'var(--clr-success)',
   },
   {
-    icon: '🏆',
-    title: 'Speed-based scoring',
-    desc: 'Answer quickly to earn bonus points. Speed and accuracy both count.',
+    icon: '🎓',
+    title: 'Study Groups',
+    desc: 'Turn boring revision into competition.',
+    color: 'var(--clr-warning)',
   },
   {
-    icon: '👥',
-    title: 'Social game modes',
-    desc: 'Who Knows Me Best, Hot Seat, and more, all made for groups.',
+    icon: '💼',
+    title: 'Team Bonding',
+    desc: 'Icebreakers that don’t feel forced.',
+    color: 'var(--accent)',
   },
   {
-    icon: '✏️',
-    title: 'Custom questions',
-    desc: 'Write your own questions with fully custom answers and correct choices.',
+    icon: '🎮',
+    title: 'Casual Gaming',
+    desc: 'Quick rounds when you\'re bored.',
+    color: 'var(--clr-danger)',
   },
   {
     icon: '🚀',
-    title: 'Zero sign-up',
-    desc: 'No account needed. Share a room code and you\'re all playing in seconds.',
+    title: 'Instant Fun',
+    desc: 'No sign-up, just play in seconds.',
+    color: '#0ea5e9',
   },
 ]
 
@@ -69,8 +77,8 @@ export default function LandingPage() {
           </h1>
 
           <p className={styles.subheading}>
-            Real-time trivia for friends, teams, and parties. AI writes the questions.
-            You bring the energy.
+            Real-time trivia for friends, teams, and parties.<br />
+            AI writes the questions. You bring the energy.
           </p>
 
           <div className={styles.actions}>
@@ -98,6 +106,15 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* ── Product screenshot ── */}
+      <section className={styles.screenshotSection}>
+        <div className={styles.screenshotWrap}>
+          <div className={styles.screenshotGlow} aria-hidden="true" />
+          <img src={hero5} alt="QuizOrb gameplay screenshot" className={`${styles.screenshotImg} ${styles.desktopImg}`} />
+          <img src={hero6} alt="QuizOrb gameplay screenshot mobile" className={`${styles.screenshotImg} ${styles.mobileImg}`} />
+        </div>
+      </section>
+
       {/* ── How it works ── */}
       <section className={styles.howSection}>
         <h2 className={styles.sectionLabel}>How it works</h2>
@@ -112,15 +129,18 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ── Features ── */}
+      {/* ── Scenarios ── */}
       <section className={styles.featuresSection}>
-        <h2 className={styles.sectionLabel}>Everything you need</h2>
+        <h2 className={styles.sectionLabel}>Made for moments like these</h2>
         <div className={styles.features}>
-          {FEATURES.map((f) => (
-            <div key={f.title} className={styles.featureCard}>
-              <span className={styles.featureIcon}>{f.icon}</span>
-              <h3 className={styles.featureTitle}>{f.title}</h3>
-              <p className={styles.featureDesc}>{f.desc}</p>
+          {SCENARIOS.map((s) => (
+            <div key={s.title} className={styles.featureCard}>
+              <div className={styles.featureGlow} style={{ '--glow-color': s.color } as React.CSSProperties} aria-hidden="true" />
+              <div className={styles.featureIconWrap}>
+                <span className={styles.featureIcon}>{s.icon}</span>
+              </div>
+              <h3 className={styles.featureTitle}>{s.title}</h3>
+              <p className={styles.featureDesc}>{s.desc}</p>
             </div>
           ))}
         </div>

@@ -43,8 +43,8 @@
 
   /* ── Text ────────────────────────────────────────────────── */
   --text:             #eaeaf5;
-  --text-2:           rgba(234, 234, 245, 0.58);
-  --text-3:           rgba(234, 234, 245, 0.34);
+  --text-2:           rgba(234, 234, 245, 0.72);
+  --text-3:           rgba(234, 234, 245, 0.48);
 
   /* ── Legacy aliases (keeps all existing module CSS working) ─ */
   --clr-primary:        var(--brand);
@@ -448,10 +448,10 @@ a[data-loading]::before {
   background: var(--surface-raised);
 }
 .seg-active {
-  background: var(--surface-high);
-  color: var(--text);
-  border-color: var(--border-strong);
-  box-shadow: var(--shadow-xs);
+  background: var(--brand-soft);
+  color: var(--accent);
+  border-color: var(--brand);
+  box-shadow: 0 0 0 2px rgba(109, 94, 245, 0.22), var(--shadow-xs);
 }
 
 /* ═══════════════════════════════════════════════════════════

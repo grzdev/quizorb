@@ -1,4 +1,4 @@
-﻿import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { API_BASE } from '../config.ts'
 import type { GeneratedQuestion, HostMode, RoomMode, SocialModeType, SocialPackId, Topic } from '../types.ts'
@@ -107,6 +107,8 @@ export default function CreatePage() {
   const [draft, setDraft] = useState<DraftQuestion>(emptyDraft())
   const [draftError, setDraftError] = useState<string | null>(null)
 
+  const previewRef = useRef<HTMLDivElement>(null)
+
   const activeQuestions: GeneratedQuestion[] | null =
     mode === 'trivia' ? triviaQuestions
     : SOCIAL_MODES.includes(mode) ? socialQuestions
@@ -176,6 +178,7 @@ export default function CreatePage() {
       }
       const data = await response.json() as { questions: GeneratedQuestion[] }
       setTriviaQuestions(data.questions)
+      setTimeout(() => previewRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50)
     } catch (err) { setError((err as Error).message) } finally { setTriviaLoading(false) }
   }
 
@@ -190,6 +193,7 @@ export default function CreatePage() {
       const data = await safeFetch<{ questions?: GeneratedQuestion[] }>(res, 'quizzes/from-file')
       if (!data.questions || data.questions.length === 0) throw new Error('No valid questions could be generated from this file. Try a different file or add more content.')
       setTriviaQuestions(data.questions)
+      setTimeout(() => previewRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50)
     } catch (err) {
       setTriviaQuestions(null)
       setError((err as Error).message)
@@ -204,6 +208,7 @@ export default function CreatePage() {
       if (!res.ok) throw new Error('Could not load questions')
       const data = await res.json() as { questions: GeneratedQuestion[] }
       setSocialQuestions(data.questions)
+      setTimeout(() => previewRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50)
     } catch (err) { setError((err as Error).message) } finally { setSocialLoading(false) }
   }
 
@@ -387,61 +392,66 @@ export default function CreatePage() {
     <div className={styles.container}>
       <div className={styles.layout}>
 
-        {/* ══════════════════════════════════
-            LEFT — Setup controls
-        ══════════════════════════════════ */}
-        <div className={styles.formColumn}>
+        <div className={styles.topRow}>
 
-          {/* ① Basics */}
-          <div className={styles.card}>
-            <p className="ds-label">Quiz basics</p>
-            <div className={styles.fieldGroup}>
-              <label className={styles.fieldWrap}>
-                <span className="field-label">Quiz title</span>
-                <input
-                  className="input-field"
-                  type="text"
-                  placeholder="e.g. Friday Night Trivia"
-                  value={title}
-                  onChange={(e) => setTitle(e.target.value)}
-                />
-              </label>
-              <label className={styles.fieldWrap}>
-                <span className="field-label">Host name</span>
-                <input
-                  className="input-field"
-                  type="text"
-                  placeholder="e.g. Alex"
-                  value={hostName}
-                  onChange={(e) => setHostName(e.target.value)}
-                />
-              </label>
-            </div>
-          </div>
+          {/* ── Left column: Basics + Mode stacked ── */}
+          <div className={styles.leftCol}>
 
-          {/* ② Mode */}
-          <div className={styles.card}>
-            <p className="ds-label">Game mode</p>
-            <div className={styles.modeGrid}>
-              {MODES.map((m) => (
-                <button
-                  key={m}
-                  type="button"
-                  className={`${styles.modeCard} ${mode === m ? styles.modeCardActive : ''}`}
-                  onClick={() => switchMode(m)}
-                >
-                  <span className={styles.modeIcon}>{MODE_META[m].icon}</span>
-                  <span className={styles.modeLabel}>{MODE_META[m].label}</span>
-                </button>
-              ))}
+            {/* ① Basics */}
+            <div className={styles.card}>
+              <p className={styles.cardLabel}>Quiz basics</p>
+              <div className={styles.fieldGroup}>
+                <label className={styles.fieldWrap}>
+                  <span className="field-label">Quiz title</span>
+                  <input
+                    className="input-field"
+                    type="text"
+                    placeholder="e.g. Friday Night Trivia"
+                    value={title}
+                    onChange={(e) => setTitle(e.target.value)}
+                  />
+                </label>
+                <label className={styles.fieldWrap}>
+                  <span className="field-label">Host name</span>
+                  <input
+                    className="input-field"
+                    type="text"
+                    placeholder="e.g. Alex"
+                    value={hostName}
+                    onChange={(e) => setHostName(e.target.value)}
+                  />
+                </label>
+              </div>
             </div>
-            <p className={styles.modeDesc}>{getModeDesc()}</p>
-          </div>
+
+            {/* ② Mode */}
+            <div className={styles.card}>
+              <p className={styles.cardLabel}>Game mode</p>
+              <div className={styles.modeGrid}>
+                {MODES.map((m) => (
+                  <button
+                    key={m}
+                    type="button"
+                    className={`${styles.modeCard} ${mode === m ? styles.modeCardActive : ''}`}
+                    onClick={() => switchMode(m)}
+                  >
+                    <span className={styles.modeIcon}>{MODE_META[m].icon}</span>
+                    <span className={styles.modeLabel}>{MODE_META[m].label}</span>
+                  </button>
+                ))}
+              </div>
+              <p className={styles.modeDesc}>{getModeDesc()}</p>
+            </div>
+
+          </div>{/* end leftCol */}
+
+          {/* ── Right column: source card + stacked preview ── */}
+          <div className={`${styles.rightCol} ${mode === 'custom' ? styles.rightColStretch : ''}`}>
 
           {/* ③a Trivia source */}
           {mode === 'trivia' && (
-            <div className={styles.card}>
-              <p className="ds-label">Topic &amp; source</p>
+            <div className={`${styles.card} ${styles.cardSource}`}>
+              <p className={styles.cardLabel}>Topic &amp; source</p>
               <form onSubmit={handleGenerateTrivia} className={styles.sectionForm}>
 
                 <div className="seg-control">
@@ -516,6 +526,31 @@ export default function CreatePage() {
                   </div>
                 </div>
 
+                <div className={styles.roleSection}>
+                  <p className={styles.roleSectionLabel}>Your role</p>
+                  <div className="seg-control">
+                    <button
+                      type="button"
+                      className={`seg-option ${hostMode === 'player' ? 'seg-active' : ''}`}
+                      disabled={!!activeQuestions}
+                      onClick={() => { setHostMode('player'); setRoomCode(null); setRevealAnswers(false) }}
+                    >🎮 Play as host</button>
+                    <button
+                      type="button"
+                      className={`seg-option ${hostMode === 'spectate' ? 'seg-active' : ''}`}
+                      disabled={!!activeQuestions}
+                      onClick={() => { setHostMode('spectate'); setRoomCode(null); setRevealAnswers(false) }}
+                    >👁 Spectate</button>
+                  </div>
+                  <p className={styles.roleHint}>
+                    {activeQuestions
+                      ? '🔒 Role is locked. Generate new questions to change it.'
+                      : hostMode === 'player'
+                        ? "Questions stay hidden. You'll compete with your players."
+                        : "You'll see all questions and manage the game without competing."}
+                  </p>
+                </div>
+
                 {topicSource === 'file' ? (
                   <button
                     type="button"
@@ -542,8 +577,8 @@ export default function CreatePage() {
 
           {/* ③b Social source */}
           {SOCIAL_MODES.includes(mode) && (
-            <div className={styles.card}>
-              <p className="ds-label">Questions</p>
+            <div className={`${styles.card} ${styles.cardSource}`}>
+              <p className={styles.cardLabel}>Questions</p>
               <div className={styles.sectionForm}>
                 {getSocialTitle() && <p className={styles.socialTitle}>{getSocialTitle()}</p>}
 
@@ -582,6 +617,33 @@ export default function CreatePage() {
                   </div>
                 </div>
 
+                {mode !== 'wkmb' && (
+                  <div className={styles.roleSection}>
+                    <p className={styles.roleSectionLabel}>Your role</p>
+                    <div className="seg-control">
+                      <button
+                        type="button"
+                        className={`seg-option ${hostMode === 'player' ? 'seg-active' : ''}`}
+                        disabled={!!activeQuestions}
+                        onClick={() => { setHostMode('player'); setRoomCode(null); setRevealAnswers(false) }}
+                      >🎮 Play as host</button>
+                      <button
+                        type="button"
+                        className={`seg-option ${hostMode === 'spectate' ? 'seg-active' : ''}`}
+                        disabled={!!activeQuestions}
+                        onClick={() => { setHostMode('spectate'); setRoomCode(null); setRevealAnswers(false) }}
+                      >👁 Spectate</button>
+                    </div>
+                    <p className={styles.roleHint}>
+                      {activeQuestions
+                        ? '🔒 Role is locked. Generate new questions to change it.'
+                        : hostMode === 'player'
+                          ? "Questions stay hidden. You'll compete with your players."
+                          : "You'll see all questions and manage the game without competing."}
+                    </p>
+                  </div>
+                )}
+
                 <button
                   type="button"
                   className={`btn-primary ${styles.genButton}`}
@@ -597,8 +659,8 @@ export default function CreatePage() {
 
           {/* ③c Custom builder */}
           {mode === 'custom' && (
-            <div className={styles.card}>
-              <p className="ds-label">Question builder</p>
+            <div className={`${styles.card} ${styles.cardSource}`}>
+              <p className={styles.cardLabel}>Question builder</p>
               <div className={styles.sectionForm}>
                 <label className={styles.fieldWrap}>
                   <span className="field-label">Question prompt</span>
@@ -635,6 +697,30 @@ export default function CreatePage() {
                   </select>
                 </div>
                 {draftError && <p className={styles.error}>{draftError}</p>}
+                <div className={styles.roleSection}>
+                  <p className={styles.roleSectionLabel}>Your role</p>
+                  <div className="seg-control">
+                    <button
+                      type="button"
+                      className={`seg-option ${hostMode === 'player' ? 'seg-active' : ''}`}
+                      disabled={!!activeQuestions}
+                      onClick={() => { setHostMode('player'); setRoomCode(null); setRevealAnswers(false) }}
+                    >🎮 Play as host</button>
+                    <button
+                      type="button"
+                      className={`seg-option ${hostMode === 'spectate' ? 'seg-active' : ''}`}
+                      disabled={!!activeQuestions}
+                      onClick={() => { setHostMode('spectate'); setRoomCode(null); setRevealAnswers(false) }}
+                    >👁 Spectate</button>
+                  </div>
+                  <p className={styles.roleHint}>
+                    {activeQuestions
+                      ? '🔒 Role is locked. Generate new questions to change it.'
+                      : hostMode === 'player'
+                        ? "Questions stay hidden. You'll compete with your players."
+                        : "You'll see all questions and manage the game without competing."}
+                  </p>
+                </div>
                 <button type="button" className={`btn-secondary ${styles.genButton}`} onClick={handleAddQuestion}>
                   + Add Question
                 </button>
@@ -642,119 +728,114 @@ export default function CreatePage() {
             </div>
           )}
 
-          {/* ④ Host role */}
-          {mode !== 'wkmb' && (
-            <div className={styles.card}>
-              <p className="ds-label">Your role</p>
-              <div className="seg-control">
-                <button
-                  type="button"
-                  className={`seg-option ${hostMode === 'player' ? 'seg-active' : ''}`}
-                  disabled={!!activeQuestions}
-                  onClick={() => { setHostMode('player'); setRoomCode(null); setRevealAnswers(false) }}
-                >🎮 Play as host</button>
-                <button
-                  type="button"
-                  className={`seg-option ${hostMode === 'spectate' ? 'seg-active' : ''}`}
-                  disabled={!!activeQuestions}
-                  onClick={() => { setHostMode('spectate'); setRoomCode(null); setRevealAnswers(false) }}
-                >👁 Spectate</button>
-              </div>
-              <p className={styles.roleHint}>
-                {activeQuestions
-                  ? '🔒 Role is locked. Generate new questions to change it.'
-                  : hostMode === 'player'
-                    ? "Questions stay hidden. You'll compete with your players."
-                    : "You'll see all questions and manage the game without competing."}
-              </p>
-            </div>
-          )}
-
-          {error && <p className={styles.error}>{error}</p>}
-        </div>
-
-        {/* ══════════════════════════════════
-            RIGHT — Preview / room panel
-        ══════════════════════════════════ */}
-        <div className={styles.previewColumn}>
-
-          {roomCode ? (
-            /* ── Room created ── */
-            <div className={styles.roomReadyPanel}>
-              <div className={styles.roomReadyTop}>
-                <span className="badge badge-success">Room created</span>
-                <div className="room-code-display">
-                  <span className="room-code-label">Room code</span>
-                  <span className="room-code-value">{roomCode}</span>
+          {/* Preview panel — stacked below source card for non-custom modes */}
+          {mode !== 'custom' && (
+            <div ref={previewRef}>
+              {roomCode ? (
+                <div className={styles.roomReadyPanel}>
+                  <div className={styles.roomReadyTop}>
+                    <span className="badge badge-success">Room created</span>
+                    <div className="room-code-display">
+                      <span className="room-code-label">Room code</span>
+                      <span className="room-code-value">{roomCode}</span>
+                    </div>
+                    <p className={styles.roomReadyHint}>Share this code with your players so they can join.</p>
+                  </div>
+                  <button
+                    className="btn-primary btn-full btn-lg"
+                    onClick={() => navigate(`/host/${roomCode}`, { state: { hostName, hostMode: committedHostMode, socialModeType: committedSocialModeType } })}
+                  >
+                    Go to lobby →
+                  </button>
                 </div>
-                <p className={styles.roomReadyHint}>Share this code with your players so they can join.</p>
-              </div>
-              <button
-                className="btn-primary btn-full btn-lg"
-                onClick={() => navigate(`/host/${roomCode}`, { state: { hostName, hostMode: committedHostMode, socialModeType: committedSocialModeType } })}
-              >
-                Go to lobby →
-              </button>
-            </div>
-
-          ) : activeQuestions && SOCIAL_MODES_WITH_SETUP.includes(mode) && socialModeType === 'set-answers-first' ? (
-            /* ── Host answer setup ── */
-            <div className={styles.previewPanel}>
-              {renderSetupFlow(activeQuestions)}
-              <div className={styles.createFooter}>
-                <button
-                  className="btn-primary btn-full btn-lg"
-                  onClick={handleCreateRoom}
-                  disabled={creatingRoom || !canCreate}
-                  data-loading={creatingRoom || undefined}
-                >
-                  {creatingRoom ? 'Creating room…' : 'Create Room'}
-                </button>
-                {(!title.trim() || !hostName.trim()) && (
-                  <p className={styles.createHint}>Fill in quiz title and host name to continue.</p>
-                )}
-                {!allAnswered && title.trim() && hostName.trim() && (
-                  <p className={styles.createHint}>Answer all questions to continue.</p>
-                )}
-              </div>
-            </div>
-
-          ) : activeQuestions ? (
-            /* ── Questions ready ── */
-            <div className={styles.previewPanel}>
-              {showFullPreview ? renderQuestionPreview(activeQuestions) : renderSummaryCard(activeQuestions)}
-              <div className={styles.createFooter}>
-                <button
-                  className="btn-primary btn-full btn-lg"
-                  onClick={handleCreateRoom}
-                  disabled={creatingRoom || !canCreate}
-                  data-loading={creatingRoom || undefined}
-                >
-                  {creatingRoom ? 'Creating room…' : 'Create Room'}
-                </button>
-                {(!title.trim() || !hostName.trim()) && (
-                  <p className={styles.createHint}>Fill in quiz title and host name to continue.</p>
-                )}
-              </div>
-            </div>
-
-          ) : (
-            /* ── Empty state ── */
-            <div className={styles.previewPlaceholder}>
-              <svg className={styles.placeholderIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/>
-                <rect x="9" y="3" width="6" height="4" rx="1"/>
-                <path d="M9 12h6M9 16h4"/>
-              </svg>
-              <p className={styles.previewPlaceholderText}>
-                {mode === 'custom'
-                  ? 'Add questions using the builder to get started.'
-                  : "Generate questions. They'll appear here for review."}
-              </p>
+              ) : activeQuestions && SOCIAL_MODES_WITH_SETUP.includes(mode) && socialModeType === 'set-answers-first' ? (
+                <div className={styles.previewPanel}>
+                  {renderSetupFlow(activeQuestions)}
+                  <div className={styles.createFooter}>
+                    <button
+                      className="btn-primary btn-full btn-lg"
+                      onClick={handleCreateRoom}
+                      disabled={creatingRoom || !canCreate}
+                      data-loading={creatingRoom || undefined}
+                    >
+                      {creatingRoom ? 'Creating room…' : 'Create Room'}
+                    </button>
+                    {(!title.trim() || !hostName.trim()) && (
+                      <p className={styles.createHint}>Fill in quiz title and host name to continue.</p>
+                    )}
+                    {!allAnswered && title.trim() && hostName.trim() && (
+                      <p className={styles.createHint}>Answer all questions to continue.</p>
+                    )}
+                  </div>
+                </div>
+              ) : activeQuestions ? (
+                <div className={styles.previewPanel}>
+                  {showFullPreview ? renderQuestionPreview(activeQuestions) : renderSummaryCard(activeQuestions)}
+                  <div className={styles.createFooter}>
+                    <button
+                      className="btn-primary btn-full btn-lg"
+                      onClick={handleCreateRoom}
+                      disabled={creatingRoom || !canCreate}
+                      data-loading={creatingRoom || undefined}
+                    >
+                      {creatingRoom ? 'Creating room…' : 'Create Room'}
+                    </button>
+                    {(!title.trim() || !hostName.trim()) && (
+                      <p className={styles.createHint}>Fill in quiz title and host name to continue.</p>
+                    )}
+                  </div>
+                </div>
+              ) : null}
             </div>
           )}
 
+          </div>{/* end rightCol */}
+
         </div>
+
+        {error && <p className={styles.error}>{error}</p>}
+
+        {/* Custom mode: full-width question list below the builder */}
+        {mode === 'custom' && (
+          <div ref={previewRef} className={styles.bottomSection}>
+            {roomCode ? (
+              <div className={styles.roomReadyPanel}>
+                <div className={styles.roomReadyTop}>
+                  <span className="badge badge-success">Room created</span>
+                  <div className="room-code-display">
+                    <span className="room-code-label">Room code</span>
+                    <span className="room-code-value">{roomCode}</span>
+                  </div>
+                  <p className={styles.roomReadyHint}>Share this code with your players so they can join.</p>
+                </div>
+                <button
+                  className="btn-primary btn-full btn-lg"
+                  onClick={() => navigate(`/host/${roomCode}`, { state: { hostName, hostMode: committedHostMode, socialModeType: committedSocialModeType } })}
+                >
+                  Go to lobby →
+                </button>
+              </div>
+            ) : activeQuestions ? (
+              <div className={styles.previewPanel}>
+                {renderQuestionPreview(activeQuestions)}
+                <div className={styles.createFooter}>
+                  <button
+                    className="btn-primary btn-full btn-lg"
+                    onClick={handleCreateRoom}
+                    disabled={creatingRoom || !canCreate}
+                    data-loading={creatingRoom || undefined}
+                  >
+                    {creatingRoom ? 'Creating room…' : 'Create Room'}
+                  </button>
+                  {(!title.trim() || !hostName.trim()) && (
+                    <p className={styles.createHint}>Fill in quiz title and host name to continue.</p>
+                  )}
+                </div>
+              </div>
+            ) : null}
+          </div>
+        )}
+
       </div>
     </div>
   )

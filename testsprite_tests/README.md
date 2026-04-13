@@ -1,30 +1,31 @@
-# TestSprite Artifacts
+# TestSprite Test Artifacts
 
-This folder contains repo-visible TestSprite hackathon artifacts generated from the local QuizOrb codebase and local app execution.
+This folder contains the cleaned final TestSprite MCP artifacts for QuizOrb.
 
-## Structure
+## What was tested
+Frontend flows focused on:
+- trivia generation and review
+- room creation
+- join via deep link with `?code=`
+- play again flow
+- invalid room handling
 
-- Root shared files:
-  - `README.md`
-  - `summary.json`
-  - `standard_prd.json`
-  - `code_summary.yaml`
-- Frontend artifacts:
-  - `frontend/`
-  - Planning outputs, frontend TC files, execution results, and temporary TestSprite outputs live here.
-  - Execution screenshots and helper rerun scripts are under `frontend/execution_artifacts/`.
-- Backend artifacts:
-  - `backend/`
-  - Reserved for backend-specific planning and execution artifacts.
-  - Backend execution artifacts belong under `backend/execution_artifacts/`.
-- Logs:
-  - `logs/`
-  - Centralized MCP, app, and local rerun logs.
+## Final results
+The retained execution bundle is round 4:
+- `3/4` targeted frontend tests passed
+- `TC009` passed
+- `TC011` passed
+- `TC108` passed
+- `TC001` was the only round 4 failure
 
-## Suggested Review Order
+That remaining round 4 failure was traced to a stale test selector in `TC001`, not a product regression. The `TC001` test file in `frontend/` has since been updated to use a more stable answer-button selector.
 
-1. Start with `standard_prd.json` and `code_summary.yaml`.
-2. Review frontend planning and TC materials under `frontend/`.
-3. Check `frontend/frontend_report.md` and `frontend/test_results.json` for the latest execution summary.
-4. Open `frontend/execution_artifacts/` for screenshots and local rerun helpers.
-5. Use `logs/` for MCP and execution logs when deeper inspection is needed.
+## Kept artifacts
+- `standard_prd.json`
+- `frontend_test_plan.json`
+- `code_summary.yaml`
+- `frontend/TC*.py`
+- `frontend/_testsprite_helpers.py`
+- `test_results_round4.json`
+- `frontend_report_round4.md`
+- `execution_artifacts_round4/`

@@ -153,7 +153,12 @@ export function registerHandlers(io: Server, socket: Socket): void {
       const key = `${roomCode}:${questionId}`;
       const isQuickPlay = room.socialModeType === "quick-play";
 
-      function emitProgress(answered: Map<string, number>) {        const optionCounts = new Array<number>(question!.options.length).fill(0);
+      function emitProgress(answered: Map<string, number>) {
+        // Only send vote breakdown to the spectating host — regular players
+        // must not see which options others have chosen.
+        if (!room!.hostSocketId) return;
+
+        const optionCounts = new Array<number>(question!.options.length).fill(0);
         const optionVoters: string[][] = question!.options.map(() => []);
         for (const [pid, idx] of answered.entries()) {
           if (idx >= 0 && idx < optionCounts.length) {
@@ -162,7 +167,7 @@ export function registerHandlers(io: Server, socket: Socket): void {
             if (name) optionVoters[idx]!.push(name);
           }
         }
-        io.to(roomCode).emit("answers:progress", {
+        io.to(room!.hostSocketId).emit("answers:progress", {
           questionId,
           answered: answered.size,
           total: room!.players.filter((p) => p.connected).length,

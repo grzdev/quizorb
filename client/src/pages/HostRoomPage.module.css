@@ -137,7 +137,8 @@
   .actions {
     flex-direction: column;
     gap: var(--sp-2);
-    max-width: 560px;
+    width: min(100%, 22rem);
+    max-width: 22rem;
   }
 
   .playAgainButton,

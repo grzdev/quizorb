@@ -76,7 +76,6 @@
 
 .timerWarning.timerCount {
   color: var(--clr-danger);
-  animation: pulse 0.8s ease-in-out infinite;
 }
 
 /* ── Question card ─────────────────────────────────────────── */

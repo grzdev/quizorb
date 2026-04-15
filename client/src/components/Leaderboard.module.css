@@ -104,8 +104,7 @@
   --medal-border: rgba(255, 215, 0, 0.38);
   --medal-glow:   rgba(255, 215, 0, 0.28);
   padding: var(--sp-5) var(--sp-4);
-  animation: fadeInUp 0.45s cubic-bezier(0.16, 1, 0.3, 1) both,
-             glowPulse 3.2s ease-in-out infinite 0.9s;
+  animation: fadeInUp 0.45s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
 .rank2 {

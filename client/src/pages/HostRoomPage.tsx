@@ -193,7 +193,7 @@ export default function HostRoomPage() {
     )
   }
 
-  return <Lobby initialRoom={room} onGameStart={() => setScreen('question')} isHost />
+  return <Lobby initialRoom={room} onGameStart={() => setScreen('question')} isHost wkmbSubjectName={room.mode === 'wkmb' ? hostName : undefined} />
 }
 
 

@@ -161,11 +161,14 @@
 /* ── Quick-play host answer interaction ────────────────────── */
 .optionInteractive {
   cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
   transition: border-color 0.15s, opacity 0.15s;
 }
 
-.optionInteractive:hover {
-  border-color: var(--clr-primary-border);
+@media (hover: hover) and (pointer: fine) {
+  .optionInteractive:hover {
+    border-color: var(--clr-primary-border);
+  }
 }
 
 .optionSelected {

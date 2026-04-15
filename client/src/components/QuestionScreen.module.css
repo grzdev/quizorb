@@ -159,13 +159,6 @@
   animation: optionRipple 0.35s ease forwards;
 }
 
-.option:hover:not(:disabled) {
-  transform: translateY(-2px);
-  background: var(--brand-dim);
-  border-color: var(--brand-border);
-  box-shadow: 0 4px 20px rgba(109, 94, 245, 0.18), var(--shadow-sm);
-}
-
 .option:active:not(:disabled) {
   transform: scale(0.975) translateY(0);
 }
@@ -206,16 +199,25 @@
   transition: background 0.14s ease, color 0.14s ease;
 }
 
-.option:hover:not(:disabled) .optionBadge {
-  background: var(--brand-soft);
-  color: var(--accent);
-  border-color: var(--brand-border);
-}
-
 .optionSelected .optionBadge {
   background: rgba(255, 255, 255, 0.08);
   border-color: rgba(255, 255, 255, 0.10);
   color: var(--text-2);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .option:hover:not(:disabled) {
+    transform: translateY(-2px);
+    background: var(--brand-dim);
+    border-color: var(--brand-border);
+    box-shadow: 0 4px 20px rgba(109, 94, 245, 0.18), var(--shadow-sm);
+  }
+
+  .option:hover:not(:disabled) .optionBadge {
+    background: var(--brand-soft);
+    color: var(--accent);
+    border-color: var(--brand-border);
+  }
 }
 
 /* ── Waiting message ───────────────────────────────────────── */

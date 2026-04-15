@@ -215,13 +215,6 @@
   animation: optionRipple 0.38s ease forwards;
 }
 
-.option:hover:not(:disabled) {
-  transform: scale(1.025);
-  background: var(--clr-primary-dim);
-  border-color: var(--clr-primary-border);
-  box-shadow: var(--shadow-glow);
-}
-
 .option:active:not(:disabled) {
   transform: scale(0.97);
 }
@@ -254,6 +247,15 @@
 }
 
 /* ── Waiting message ───────────────────────────────────────── */
+@media (hover: hover) and (pointer: fine) {
+  .option:hover:not(:disabled) {
+    transform: scale(1.025);
+    background: var(--clr-primary-dim);
+    border-color: var(--clr-primary-border);
+    box-shadow: var(--shadow-glow);
+  }
+}
+
 .waiting {
   font-size: 0.95rem;
   color: var(--clr-text-muted);

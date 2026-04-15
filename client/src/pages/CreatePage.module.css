@@ -307,17 +307,17 @@
 
 .countChips {
   display: flex;
-  gap: 0;
+  gap: 2px;
   background: var(--surface);
   border: 1px solid var(--border-strong);
-  border-radius: var(--radius-full);
-  padding: 2px;
+  border-radius: var(--radius-md);
+  padding: 3px;
 }
 
 .countChip {
-  padding: 0.45rem 1.3rem;
-  border-radius: var(--radius-full);
-  border: none;
+  padding: 0.4375rem 1.3rem;
+  border-radius: calc(var(--radius-md) - 2px);
+  border: 1px solid transparent;
   background: transparent;
   color: var(--text-2);
   font-family: var(--font-sans);
@@ -333,9 +333,10 @@
 }
 
 .countChipActive {
-  background: var(--brand);
-  color: #fff;
-  box-shadow: 0 2px 10px rgba(109, 94, 245, 0.40);
+  background: var(--brand-soft);
+  color: var(--accent);
+  border-color: var(--brand);
+  box-shadow: 0 0 0 2px rgba(109, 94, 245, 0.22), var(--shadow-xs);
 }
 
 /* ── Generate / add button ───────────────────────────────────── */
@@ -662,14 +663,14 @@
 }
 
 .correct {
-  background: var(--brand-dim);
-  border-color: var(--brand-border);
-  color: var(--accent);
+  background: transparent;
+  border-color: transparent;
+  color: var(--text-3);
 }
 
 .correct .optionBadge {
-  background: var(--brand);
-  color: #fff;
+  background: var(--border-strong);
+  color: var(--text-2);
 }
 
 .removeButton {

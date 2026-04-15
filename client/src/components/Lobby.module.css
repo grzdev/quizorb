@@ -14,14 +14,17 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  min-height: calc(100vh - 54px);
+  min-height: calc(100svh - 74px);
+  width: 100%;
   padding: var(--sp-8) var(--sp-5);
+  overflow-x: clip;
 }
 
 /* ── Premium panel ────────────────────────────────────────────── */
 .panel {
   width: 100%;
   max-width: 680px;
+  min-width: 0;
   display: flex;
   flex-direction: column;
   gap: var(--sp-5);
@@ -38,27 +41,23 @@
 /* ── Two-column main grid ─────────────────────────────────────── */
 .mainGrid {
   display: grid;
-  grid-template-columns: 1fr 1.1fr;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
   gap: var(--sp-5);
   align-items: start;
-}
-
-@media (max-width: 560px) {
-  .mainGrid {
-    grid-template-columns: 1fr;
-  }
 }
 
 .leftCol {
   display: flex;
   flex-direction: column;
   gap: var(--sp-4);
+  min-width: 0;
 }
 
 .rightCol {
   display: flex;
   flex-direction: column;
   gap: var(--sp-3);
+  min-width: 0;
 }
 
 /* ── Invite players card ───────────────────────────────────────── */
@@ -72,6 +71,7 @@
   background: var(--surface);
   border: 1px solid var(--border);
   text-align: center;
+  min-width: 0;
 }
 
 .inviteCardLabel {
@@ -89,6 +89,8 @@
   color: var(--text);
   line-height: 1;
   text-shadow: 0 0 40px rgba(109, 94, 245, 0.25);
+  max-width: 100%;
+  overflow-wrap: anywhere;
 }
 
 .codeHint {
@@ -100,12 +102,14 @@
 /* ── Copy buttons ─────────────────────────────────────────────── */
 .copyRow {
   display: flex;
+  flex-wrap: wrap;
   gap: var(--sp-2);
   width: 100%;
 }
 
 .copyBtn {
   flex: 1;
+  min-width: 0;
   padding: 0.45rem 0.8rem;
   border-radius: var(--radius-lg);
   border: 1px solid var(--brand-border);
@@ -126,12 +130,14 @@
 /* ── Social share buttons ─────────────────────────────────────── */
 .shareRow {
   display: flex;
+  flex-wrap: wrap;
   gap: var(--sp-2);
   width: 100%;
 }
 
 .shareBtn {
   flex: 1;
+  min-width: 0;
   padding: 0.45rem 0.8rem;
   border-radius: var(--radius-lg);
   border: 1px solid transparent;
@@ -169,6 +175,7 @@
   border-radius: var(--radius-xl);
   background: var(--brand-dim);
   border: 1px solid var(--brand-border);
+  min-width: 0;
 }
 
 .wkmbBannerIcon {
@@ -181,6 +188,7 @@
   display: flex;
   flex-direction: column;
   gap: 1px;
+  min-width: 0;
 }
 
 .wkmbBannerLabel {
@@ -197,6 +205,7 @@
   font-size: var(--text-sm);
   color: var(--text-2);
   font-weight: 500;
+  overflow-wrap: anywhere;
 }
 
 .wkmbBannerName {
@@ -209,6 +218,7 @@
   display: flex;
   flex-direction: column;
   gap: var(--sp-3);
+  min-width: 0;
 }
 
 .playersHeading {
@@ -260,6 +270,7 @@
   border: 1px solid var(--border);
   animation: playerIn 0.22s cubic-bezier(0.16, 1, 0.3, 1) both;
   transition: border-color 0.14s ease, background 0.14s ease, transform 0.12s ease;
+  min-width: 0;
 }
 
 .playerItem:hover {
@@ -287,6 +298,10 @@
   font-size: var(--text-sm);
   font-weight: 600;
   color: var(--text);
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .emptyHint {
@@ -363,13 +378,16 @@
   display: flex;
   flex-direction: column;
   gap: var(--sp-1);
+  min-width: 0;
 }
 
 .infoRow {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: var(--sp-3);
   font-size: var(--text-sm);
+  min-width: 0;
 }
 
 .infoLabel {
@@ -381,4 +399,86 @@
   color: var(--text);
   font-weight: 600;
   text-transform: capitalize;
+  min-width: 0;
+  text-align: right;
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 560px) {
+  .container {
+    justify-content: flex-start;
+    padding: var(--sp-4) var(--sp-3) calc(var(--sp-6) + env(safe-area-inset-bottom));
+    min-height: auto;
+  }
+
+  .panel {
+    gap: var(--sp-4);
+    padding: var(--sp-4);
+    border-radius: var(--radius-lg);
+    max-width: 100%;
+  }
+
+  .mainGrid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--sp-4);
+  }
+
+  .inviteCard {
+    gap: var(--sp-2);
+    padding: var(--sp-4) var(--sp-3);
+    border-radius: var(--radius-lg);
+  }
+
+  .codeValue {
+    font-size: 2.25rem;
+    letter-spacing: 0.14em;
+    padding-left: 0.14em;
+  }
+
+  .copyBtn,
+  .shareBtn {
+    min-height: 42px;
+    padding: 0.55rem 0.65rem;
+  }
+
+  .wkmbBanner {
+    align-items: flex-start;
+    padding: var(--sp-3);
+    border-radius: var(--radius-lg);
+  }
+
+  .playerList {
+    max-height: 260px;
+  }
+
+  .panelFooter {
+    padding-top: var(--sp-3);
+  }
+
+  .startButton {
+    min-height: 48px;
+    padding: 0.85rem 1rem;
+  }
+}
+
+@media (max-width: 360px) {
+  .container {
+    padding-left: var(--sp-2);
+    padding-right: var(--sp-2);
+  }
+
+  .panel {
+    padding: var(--sp-3);
+  }
+
+  .codeValue {
+    font-size: 2rem;
+    letter-spacing: 0.1em;
+    padding-left: 0.1em;
+  }
+
+  .copyRow,
+  .shareRow {
+    flex-direction: column;
+  }
 }

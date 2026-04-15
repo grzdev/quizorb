@@ -71,6 +71,22 @@ export function registerHandlers(io, socket) {
         room.hostSocketId = socket.id;
         callback?.({ room });
     });
+    // ── room:info ─────────────────────────────────────────────────────────────
+    socket.on("room:info", (payload, callback) => {
+        const room = getRoom(payload.roomCode);
+        if (!room) {
+            callback?.({ error: `Room "${payload.roomCode}" not found` });
+            return;
+        }
+        callback?.({
+            info: {
+                mode: room.mode,
+                quizSource: room.quizSource,
+                questionCount: room.quiz.length,
+                socialModeType: room.socialModeType
+            }
+        });
+    });
     // ── game:start ────────────────────────────────────────────────────────────
     socket.on("game:start", (payload) => {
         const room = getRoom(payload.roomCode);
@@ -100,6 +116,10 @@ export function registerHandlers(io, socket) {
         const key = `${roomCode}:${questionId}`;
         const isQuickPlay = room.socialModeType === "quick-play";
         function emitProgress(answered) {
+            // Only send vote breakdown to the spectating host — regular players
+            // must not see which options others have chosen.
+            if (!room.hostSocketId)
+                return;
             const optionCounts = new Array(question.options.length).fill(0);
             const optionVoters = question.options.map(() => []);
             for (const [pid, idx] of answered.entries()) {
@@ -110,7 +130,7 @@ export function registerHandlers(io, socket) {
                         optionVoters[idx].push(name);
                 }
             }
-            io.to(roomCode).emit("answers:progress", {
+            io.to(room.hostSocketId).emit("answers:progress", {
                 questionId,
                 answered: answered.size,
                 total: room.players.filter((p) => p.connected).length,
@@ -247,11 +267,13 @@ export function registerHandlers(io, socket) {
         advanceQuestion(io, room);
     });
     // ── room:reset ────────────────────────────────────────────────────────────
-    socket.on("room:reset", (payload) => {
+    socket.on("room:reset", (payload, callback) => {
         void (async () => {
             const room = getRoom(payload.roomCode);
-            if (!room)
+            if (!room) {
+                callback?.({ error: "Room not found" });
                 return;
+            }
             clearRoomRoundState(room.roomCode);
             // Archive the current round's questions so next round avoids them
             const normalise = (t) => t.toLowerCase().trim();
@@ -283,6 +305,7 @@ export function registerHandlers(io, socket) {
             }
             resetRoomForReplay(room);
             broadcastRoom(io, room);
+            callback?.({ room });
         })();
     });
     // ── disconnect ────────────────────────────────────────────────────────────

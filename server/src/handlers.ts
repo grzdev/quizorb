@@ -325,10 +325,13 @@ export function registerHandlers(io: Server, socket: Socket): void {
   );
 
   // ── room:reset ────────────────────────────────────────────────────────────
-  socket.on("room:reset", (payload: { roomCode: string }) => {
+  socket.on("room:reset", (payload: { roomCode: string }, callback?: (res: { error?: string; room?: Room }) => void) => {
     void (async () => {
       const room = getRoom(payload.roomCode);
-      if (!room) return;
+      if (!room) {
+        callback?.({ error: "Room not found" });
+        return;
+      }
 
       clearRoomRoundState(room.roomCode);
 
@@ -361,6 +364,7 @@ export function registerHandlers(io: Server, socket: Socket): void {
 
       resetRoomForReplay(room);
       broadcastRoom(io, room);
+      callback?.({ room });
     })();
   });
 

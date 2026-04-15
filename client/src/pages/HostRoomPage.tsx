@@ -26,6 +26,9 @@ export default function HostRoomPage() {
   const [screen, setScreen] = useState<Screen>('lobby')
   const [question, setQuestion] = useState<QuestionPayload | null>(null)
   const [players, setPlayers] = useState<Player[]>([])
+  const [resetting, setResetting] = useState(false)
+  const [actionError, setActionError] = useState<string | null>(null)
+  const resetConnectTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   // ── Join / connect to room ───────────────────────────────────────────────
   useEffect(() => {
@@ -84,7 +87,13 @@ export default function HostRoomPage() {
     return () => {
       socket.off('connect', join)
     }
-  }, [roomCode, hostName, hostMode, socket])
+  }, [roomCode, hostName, hostMode, socialModeType, socket])
+
+  useEffect(() => {
+    return () => {
+      if (resetConnectTimerRef.current) clearTimeout(resetConnectTimerRef.current)
+    }
+  }, [])
 
   // ── Game event listeners ─────────────────────────────────────────────────
   useEffect(() => {
@@ -128,15 +137,62 @@ export default function HostRoomPage() {
   }, [socket, joined])
 
   function handlePlayAgain() {
-    if (!roomCode) return
-    socket.emit('room:reset', { roomCode })
+    if (!roomCode || resetting) return
+
+    setActionError(null)
+    setResetting(true)
+
+    const emitReset = () => {
+      if (resetConnectTimerRef.current) {
+        clearTimeout(resetConnectTimerRef.current)
+        resetConnectTimerRef.current = null
+      }
+
+      socket.timeout(30000).emit(
+        'room:reset',
+        { roomCode },
+        (err: Error | null, res?: { error?: string; room?: Room }) => {
+          setResetting(false)
+          if (err) {
+            setActionError('Could not restart the room. Check your connection and try again.')
+            return
+          }
+          if (res?.error) {
+            setActionError(res.error)
+            return
+          }
+          if (res?.room) {
+            setRoom(res.room)
+            setPlayers(res.room.players)
+            setQuestion(null)
+            setScreen('lobby')
+          }
+        },
+      )
+    }
+
+    if (socket.connected) {
+      emitReset()
+      return
+    }
+
+    socket.once('connect', emitReset)
+    socket.connect()
+    resetConnectTimerRef.current = setTimeout(() => {
+      socket.off('connect', emitReset)
+      setResetting(false)
+      setActionError('Could not reconnect. Check your connection and try again.')
+      resetConnectTimerRef.current = null
+    }, 10000)
   }
 
   function handleCreateNew() {
+    if (resetting) return
     navigate('/create')
   }
 
   function handleGoHome() {
+    if (resetting) return
     navigate('/')
   }
 
@@ -179,16 +235,33 @@ export default function HostRoomPage() {
         <h1 className={styles.finishedHeading}>Game Over</h1>
         <Leaderboard initialPlayers={players} myId={hostMode === 'player' && !socialModeType ? socket.id : undefined} />
         <div className={styles.actions}>
-          <button className={styles.playAgainButton} onClick={handlePlayAgain}>
-            Play Again
+          <button
+            type="button"
+            className={styles.playAgainButton}
+            onClick={handlePlayAgain}
+            disabled={resetting}
+            data-loading={resetting || undefined}
+          >
+            {resetting ? 'Restarting...' : 'Play Again'}
           </button>
-          <button className={styles.createNewButton} onClick={handleCreateNew}>
+          <button
+            type="button"
+            className={styles.createNewButton}
+            onClick={handleCreateNew}
+            disabled={resetting}
+          >
             Create New Game
           </button>
-          <button className={styles.homeButton} onClick={handleGoHome}>
+          <button
+            type="button"
+            className={styles.homeButton}
+            onClick={handleGoHome}
+            disabled={resetting}
+          >
             🏠 Home
           </button>
         </div>
+        {actionError && <p className={styles.actionError}>{actionError}</p>}
       </div>
     )
   }

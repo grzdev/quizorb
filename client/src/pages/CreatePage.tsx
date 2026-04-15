@@ -86,14 +86,12 @@ function emptyDraft(): DraftQuestion { return { text: '', options: ['', '', '', 
 export default function CreatePage() {
   const navigate = useNavigate()
   const [mode, setMode] = useState<Mode>('trivia')
-  const [title, setTitle] = useState('')
   const [hostName, setHostName] = useState('')
   const [error, setError] = useState<string | null>(null)
   const [roomCode, setRoomCode] = useState<string | null>(null)
   const [committedHostMode, setCommittedHostMode] = useState<HostMode>('player')
   const [committedSocialModeType, setCommittedSocialModeType] = useState<SocialModeType | null>(null)
   const [creatingRoom, setCreatingRoom] = useState(false)
-  const [revealAnswers, setRevealAnswers] = useState(false)
   const [hostMode, setHostMode] = useState<HostMode>('player')
   const [topic, setTopic] = useState<Topic>('science')
   const [triviaCount, setTriviaCount] = useState(10)
@@ -126,7 +124,7 @@ export default function CreatePage() {
   const showFullPreview = mode === 'custom' || hostMode === 'spectate'
 
   function switchMode(next: Mode) {
-    setMode(next); setError(null); setRoomCode(null); setRevealAnswers(false)
+    setMode(next); setError(null); setRoomCode(null)
     if (!SOCIAL_MODES.includes(next)) setSocialQuestions(null)
     if (!SOCIAL_MODES_WITH_SETUP.includes(next)) setSocialModeType('quick-play')
     if (SOCIAL_MODES_WITH_SETUP.includes(next)) setHostMode('spectate')
@@ -152,7 +150,7 @@ export default function CreatePage() {
   async function handleGenerateTrivia(e: React.FormEvent) {
     e.preventDefault()
     if (topicSource === 'ai' && !aiTopic.trim()) { setError('Enter a topic to generate questions.'); return }
-    setTriviaLoading(true); setError(null); setTriviaQuestions(null); setRoomCode(null); setRevealAnswers(false)
+    setTriviaLoading(true); setError(null); setTriviaQuestions(null); setRoomCode(null)
     try {
       const topicLabel = topicSource === 'ai'
         ? aiTopic.trim()
@@ -191,7 +189,7 @@ export default function CreatePage() {
 
   async function handleGenerateFromFile() {
     if (!uploadedFile) return
-    setFileLoading(true); setError(null); setTriviaQuestions(null); setRoomCode(null); setRevealAnswers(false)
+    setFileLoading(true); setError(null); setTriviaQuestions(null); setRoomCode(null)
     try {
       const formData = new FormData()
       formData.append('file', uploadedFile)
@@ -210,7 +208,7 @@ export default function CreatePage() {
 
   async function handleGenerateSocial() {
     const packId = SOCIAL_PACK_ID[mode]; if (!packId) return
-    setSocialLoading(true); setSocialQuestions(null); setError(null); setRoomCode(null); setRevealAnswers(false); setHostAnswers({})
+    setSocialLoading(true); setSocialQuestions(null); setError(null); setRoomCode(null); setHostAnswers({})
     try {
       const res = await fetch(`${API_BASE}/api/packs/${packId}?count=${socialCount}`)
       if (!res.ok) throw new Error('Could not load questions')
@@ -260,7 +258,6 @@ export default function CreatePage() {
       const res = await fetch(`${API_BASE}/api/rooms/create`, {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          title,
           questions: activeQuestions,
           mode: ROOM_MODE[mode],
           hostMode,
@@ -281,7 +278,6 @@ export default function CreatePage() {
     const removable = mode === 'custom'
     const name = hostName.trim()
     const modeLabel = `${MODE_META[mode].icon} ${MODE_META[mode].label}`
-    const isQuickPlaySocial = SOCIAL_MODES_WITH_SETUP.includes(mode) && socialModeType === 'quick-play'
     return (
       <section className={styles.results}>
         <div className={styles.previewHead}>
@@ -294,11 +290,6 @@ export default function CreatePage() {
           )}
           <div className={styles.resultsHeader}>
             <span className={styles.resultsHeading}>{questions.length} question{questions.length !== 1 ? 's' : ''}</span>
-            {!isQuickPlaySocial && (
-              <button type="button" className={`btn-ghost btn-sm ${styles.revealToggle}`} onClick={() => setRevealAnswers((v) => !v)}>
-                {revealAnswers ? 'Hide answers' : 'Reveal answers'}
-              </button>
-            )}
           </div>
         </div>
         <div className={styles.questionListScrollable}>
@@ -314,7 +305,7 @@ export default function CreatePage() {
                 <p className={styles.questionText}>{q.text}</p>
                 <ul className={styles.optionList}>
                   {q.options.map((opt, j) => (
-                    <li key={j} className={`${styles.option} ${!isQuickPlaySocial && revealAnswers && j === q.correctIndex ? styles.correct : ''}`}>
+                    <li key={j} className={styles.option}>
                       <span className={styles.optionBadge}>{OPTION_LABELS[j]}</span>
                       <span>{opt}</span>
                     </li>
@@ -333,7 +324,6 @@ export default function CreatePage() {
     return (
       <div className={styles.summaryCard}>
         <span className="badge badge-brand" style={{ alignSelf: 'flex-start' }}>{modeLabel}</span>
-        <h2 className={styles.summaryTitle}>{title.trim() || 'Untitled Quiz'}</h2>
         <dl className={styles.summaryList}>
           <div className={styles.summaryRow}>
             <dt className={styles.summaryKey}>Host</dt>
@@ -394,7 +384,7 @@ export default function CreatePage() {
     !SOCIAL_MODES_WITH_SETUP.includes(mode) ||
     socialModeType !== 'set-answers-first' ||
     (socialQuestions !== null && Object.keys(hostAnswers).length === socialQuestions.length)
-  const canCreate = !!activeQuestions && title.trim().length > 0 && hostName.trim().length > 0 && allAnswered
+  const canCreate = !!activeQuestions && hostName.trim().length > 0 && allAnswered
 
   return (
     <div className={styles.container}>
@@ -407,18 +397,7 @@ export default function CreatePage() {
 
             {/* ① Basics */}
             <div className={styles.card}>
-              <p className={styles.cardLabel}>Quiz basics</p>
               <div className={styles.fieldGroup}>
-                <label className={styles.fieldWrap}>
-                  <span className="field-label">Quiz title</span>
-                  <input
-                    className="input-field"
-                    type="text"
-                    placeholder="e.g. Friday Night Trivia"
-                    value={title}
-                    onChange={(e) => setTitle(e.target.value)}
-                  />
-                </label>
                 <label className={styles.fieldWrap}>
                   <span className="field-label">Host name</span>
                   <input
@@ -555,13 +534,13 @@ export default function CreatePage() {
                       type="button"
                       className={`seg-option ${hostMode === 'player' ? 'seg-active' : ''}`}
                       disabled={!!activeQuestions}
-                      onClick={() => { setHostMode('player'); setRoomCode(null); setRevealAnswers(false) }}
+                      onClick={() => { setHostMode('player'); setRoomCode(null) }}
                     >🎮 Play as host</button>
                     <button
                       type="button"
                       className={`seg-option ${hostMode === 'spectate' ? 'seg-active' : ''}`}
                       disabled={!!activeQuestions}
-                      onClick={() => { setHostMode('spectate'); setRoomCode(null); setRevealAnswers(false) }}
+                      onClick={() => { setHostMode('spectate'); setRoomCode(null) }}
                     >👁 Spectate</button>
                   </div>
                   <p className={styles.roleHint}>
@@ -647,13 +626,13 @@ export default function CreatePage() {
                         type="button"
                         className={`seg-option ${hostMode === 'player' ? 'seg-active' : ''}`}
                         disabled={!!activeQuestions}
-                        onClick={() => { setHostMode('player'); setRoomCode(null); setRevealAnswers(false) }}
+                        onClick={() => { setHostMode('player'); setRoomCode(null) }}
                       >🎮 Play as host</button>
                       <button
                         type="button"
                         className={`seg-option ${hostMode === 'spectate' ? 'seg-active' : ''}`}
                         disabled={!!activeQuestions}
-                        onClick={() => { setHostMode('spectate'); setRoomCode(null); setRevealAnswers(false) }}
+                        onClick={() => { setHostMode('spectate'); setRoomCode(null) }}
                       >👁 Spectate</button>
                     </div>
                     <p className={styles.roleHint}>
@@ -726,13 +705,13 @@ export default function CreatePage() {
                       type="button"
                       className={`seg-option ${hostMode === 'player' ? 'seg-active' : ''}`}
                       disabled={!!activeQuestions}
-                      onClick={() => { setHostMode('player'); setRoomCode(null); setRevealAnswers(false) }}
+                      onClick={() => { setHostMode('player'); setRoomCode(null) }}
                     >🎮 Play as host</button>
                     <button
                       type="button"
                       className={`seg-option ${hostMode === 'spectate' ? 'seg-active' : ''}`}
                       disabled={!!activeQuestions}
-                      onClick={() => { setHostMode('spectate'); setRoomCode(null); setRevealAnswers(false) }}
+                      onClick={() => { setHostMode('spectate'); setRoomCode(null) }}
                     >👁 Spectate</button>
                   </div>
                   <p className={styles.roleHint}>
@@ -782,10 +761,10 @@ export default function CreatePage() {
                     >
                       {creatingRoom ? 'Creating room…' : 'Create Room'}
                     </button>
-                    {(!title.trim() || !hostName.trim()) && (
-                      <p className={styles.createHint}>Fill in quiz title and host name to continue.</p>
+                    {!hostName.trim() && (
+                      <p className={styles.createHint}>Fill in host name to continue.</p>
                     )}
-                    {!allAnswered && title.trim() && hostName.trim() && (
+                    {!allAnswered && hostName.trim() && (
                       <p className={styles.createHint}>Answer all questions to continue.</p>
                     )}
                   </div>
@@ -802,8 +781,8 @@ export default function CreatePage() {
                     >
                       {creatingRoom ? 'Creating room…' : 'Create Room'}
                     </button>
-                    {(!title.trim() || !hostName.trim()) && (
-                      <p className={styles.createHint}>Fill in quiz title and host name to continue.</p>
+                    {!hostName.trim() && (
+                      <p className={styles.createHint}>Fill in host name to continue.</p>
                     )}
                   </div>
                 </div>
@@ -849,8 +828,8 @@ export default function CreatePage() {
                   >
                     {creatingRoom ? 'Creating room…' : 'Create Room'}
                   </button>
-                  {(!title.trim() || !hostName.trim()) && (
-                    <p className={styles.createHint}>Fill in quiz title and host name to continue.</p>
+                  {!hostName.trim() && (
+                    <p className={styles.createHint}>Fill in host name to continue.</p>
                   )}
                 </div>
               </div>

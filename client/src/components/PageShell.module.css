@@ -57,6 +57,32 @@
   background: var(--surface-raised);
 }
 
+@media (max-width: 560px) {
+  .topbar {
+    height: 60px;
+    padding: 0 var(--sp-3);
+  }
+
+  .logoImg {
+    height: 32px;
+  }
+
+  .back {
+    font-size: 1.6rem;
+    padding: 0.25rem 0.45rem;
+  }
+}
+
+@media (max-width: 360px) {
+  .topbar {
+    padding: 0 var(--sp-2);
+  }
+
+  .logoImg {
+    height: 30px;
+  }
+}
+
 /* ── Page content area ─────────────────────────────────────── */
 .content {
   flex: 1;

@@ -21,6 +21,7 @@
   align-items: center;
   gap: 1.5rem;
   padding: 2rem;
+  width: 100%;
   animation: fadeInUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
@@ -38,20 +39,31 @@
   gap: 1rem;
   flex-wrap: wrap;
   justify-content: center;
+  width: 100%;
+  position: relative;
+  z-index: 1;
 }
 
-.playAgainButton {
+.playAgainButton,
+.createNewButton,
+.homeButton {
   padding: 0.85rem 2rem;
   border-radius: var(--radius-md);
-  border: none;
-  background: var(--clr-primary);
-  color: #fff;
   font-size: 1rem;
   font-weight: 600;
   font-family: var(--font-sans);
   cursor: pointer;
+  min-height: 48px;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.playAgainButton {
+  border: none;
+  background: var(--clr-primary);
+  color: #fff;
   box-shadow: 0 2px 12px rgba(109, 94, 245, 0.3);
-  transition: background 0.18s ease, box-shadow 0.18s ease, transform 0.12s ease;
+  transition: background 0.18s ease, box-shadow 0.18s ease, transform 0.12s ease, opacity 0.18s ease;
 }
 
 .playAgainButton:hover {
@@ -64,16 +76,10 @@
 }
 
 .createNewButton {
-  padding: 0.85rem 2rem;
-  border-radius: var(--radius-md);
   border: 1px solid var(--clr-border-strong);
   background: transparent;
   color: var(--clr-text);
-  font-size: 1rem;
-  font-weight: 600;
-  font-family: var(--font-sans);
-  cursor: pointer;
-  transition: background 0.18s ease, border-color 0.18s ease, transform 0.12s ease;
+  transition: background 0.18s ease, border-color 0.18s ease, transform 0.12s ease, opacity 0.18s ease;
 }
 
 .createNewButton:hover {
@@ -86,16 +92,10 @@
 }
 
 .homeButton {
-  padding: 0.85rem 2rem;
-  border-radius: var(--radius-md);
   border: 1px solid transparent;
   background: transparent;
   color: var(--clr-text-muted);
-  font-size: 1rem;
-  font-weight: 600;
-  font-family: var(--font-sans);
-  cursor: pointer;
-  transition: color 0.18s ease, border-color 0.18s ease, transform 0.12s ease;
+  transition: color 0.18s ease, border-color 0.18s ease, transform 0.12s ease, opacity 0.18s ease;
 }
 
 .homeButton:hover {
@@ -105,5 +105,45 @@
 
 .homeButton:active {
   transform: scale(0.97);
+}
+
+.playAgainButton:disabled,
+.createNewButton:disabled,
+.homeButton:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+  transform: none;
+}
+
+.actionError {
+  margin: calc(var(--sp-2) * -1) 0 0;
+  max-width: 560px;
+  color: var(--clr-danger);
+  font-size: var(--text-sm);
+  text-align: center;
+  line-height: 1.5;
+}
+
+@media (max-width: 560px) {
+  .finishedContainer {
+    gap: var(--sp-4);
+    padding: var(--sp-5) var(--sp-4) calc(var(--sp-8) + env(safe-area-inset-bottom));
+  }
+
+  .finishedHeading {
+    font-size: 1.65rem;
+  }
+
+  .actions {
+    flex-direction: column;
+    gap: var(--sp-2);
+    max-width: 560px;
+  }
+
+  .playAgainButton,
+  .createNewButton,
+  .homeButton {
+    width: 100%;
+  }
 }
 

@@ -103,7 +103,7 @@ export default function PlayRoomPage() {
     return (
       <div className={styles.finishedContainer}>
         <Leaderboard initialPlayers={players} myId={socket.id} />
-        <button className={styles.homeButton} onClick={() => navigate('/')}>
+        <button type="button" className={styles.homeButton} onClick={() => navigate('/')}>
           🏠 Back to Home
         </button>
       </div>

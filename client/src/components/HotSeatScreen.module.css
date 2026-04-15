@@ -192,6 +192,7 @@
   font-family: var(--font-sans);
   text-align: left;
   cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
   transition:
     transform 0.15s ease,
     background 0.15s ease,
@@ -231,9 +232,9 @@
 }
 
 .optionSelected {
-  background: var(--clr-primary) !important;
-  border-color: var(--clr-primary) !important;
-  box-shadow: 0 0 0 4px var(--clr-primary-dim), var(--shadow-glow) !important;
+  background: var(--clr-surface) !important;
+  border-color: var(--clr-border-strong) !important;
+  box-shadow: none !important;
   opacity: 1 !important;
   transform: scale(1) !important;
   animation: selectPop 0.25s cubic-bezier(0.34, 1.56, 0.64, 1) both;

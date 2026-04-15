@@ -90,10 +90,10 @@ export default function Lobby({ initialRoom, onGameStart, isHost = false, wkmbSu
               {isHost ? (
                 <>
                   <div className={styles.copyRow}>
-                    <button className={styles.copyBtn} onClick={copyCode}>
+                    <button type="button" className={styles.copyBtn} onClick={copyCode}>
                       {codeCopied ? 'Copied!' : 'Copy code'}
                     </button>
-                    <button className={styles.copyBtn} onClick={copyLink}>
+                    <button type="button" className={styles.copyBtn} onClick={copyLink}>
                       {linkCopied ? 'Link copied!' : 'Copy link'}
                     </button>
                   </div>
@@ -178,6 +178,7 @@ export default function Lobby({ initialRoom, onGameStart, isHost = false, wkmbSu
         <div className={styles.panelFooter}>
           {isHost && room.status === "lobby" ? (
             <button
+              type="button"
               className={styles.startButton}
               onClick={handleStart}
               disabled={room.players.length < 1}
